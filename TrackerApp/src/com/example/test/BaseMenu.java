@@ -1,0 +1,33 @@
+package com.example.test;
+
+import android.support.v4.app.FragmentActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
+
+// Base class for the main menu
+public class BaseMenu  extends FragmentActivity {
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.main_menu, menu);
+	    return true;
+	}
+
+	//Handles item actions from main_menu
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	  switch (item.getItemId()) {
+	  case R.id.action_settings:
+		  Toast.makeText(getApplicationContext(), "Settings item tapped", Toast.LENGTH_SHORT).show();
+	      return true;
+	  case R.id.action_quit:
+		  finish();
+          System.exit(0);
+	  }
+
+	  return false;
+	}
+}
