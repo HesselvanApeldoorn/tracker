@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Test</string>
+    <string name="app_name">Tracker</string>
     <string name="action_settings">Settings</string>
     <string name="home_screen">Home screen</string>
     <string name="location_screen">Location screen</string>
+    <string name="action_quit">Quit</string>
+    <string name="button_toLocation">Location</string>
+    <string name="button_toMainActivity">Home</string>
 
 </resources>

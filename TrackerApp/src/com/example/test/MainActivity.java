@@ -1,12 +1,10 @@
 package com.example.test;
 
 import android.os.Bundle;
-import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
-import android.widget.TextView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends BaseMenu {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -15,14 +13,9 @@ public class MainActivity extends Activity {
 
 	}
 
-	public void changeWelcome(View view) {
-//		TextView text = (TextView)findViewById(R.id.textView1);
-//		text.setText("Clck fo next screen");
-		
-		Intent nextScreen = new Intent(getApplicationContext(), Location.class);
-		startActivity(nextScreen);
-
-	}
 	
-
+	public void openLocation(View view) {
+		Intent location_screen = new Intent(getApplicationContext(), Location.class);
+		startActivity(location_screen);
+	}
 }

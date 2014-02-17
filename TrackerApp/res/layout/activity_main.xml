@@ -16,13 +16,28 @@
         android:text="@string/home_screen" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/button_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="To the location!" 
-        android:onClick="changeWelcome"/>
+        android:onClick="openLocation"
+        android:text="@string/button_toLocation" />
 
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/home_screen" />
+
+    <TextView
+        android:id="@+id/TextView02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/home_screen" />
 
 </RelativeLayout>

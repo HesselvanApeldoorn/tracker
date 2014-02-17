@@ -11,13 +11,11 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class Location extends FragmentActivity implements
+public class Location extends BaseMenu implements
 		GooglePlayServicesClient.ConnectionCallbacks,
 		GooglePlayServicesClient.OnConnectionFailedListener {
 
@@ -111,10 +109,9 @@ public class Location extends FragmentActivity implements
 		GooglePlayServicesUtil.getErrorDialog(code, this, 0).show();
 	}
 
-	public void changeWelcome(View view) {
-		Intent nextScreen = new Intent(getApplicationContext(),
-				MainActivity.class);
-		startActivity(nextScreen);
+	public void openMainActivity(View view) {
+		Intent mainActivity_screen = new Intent(getApplicationContext(), MainActivity.class);
+		startActivity(mainActivity_screen);
 	}
 
 	/*************************************** CHECK FOR GOOGLE PLAY SERVICES ***************************************/
@@ -169,36 +166,36 @@ public class Location extends FragmentActivity implements
 		}
 	}
 
-	private boolean servicesConnected() {
-		// Check that Google Play services is available
-		int resultCode = GooglePlayServicesUtil
-				.isGooglePlayServicesAvailable(this);
-		// If Google Play services is available
-		if (ConnectionResult.SUCCESS == resultCode) {
-			// In debug mode, log the status
-			Log.d("Location Updates", "Google Play services is available.");
-			// Continue
-			return true;
-			// Google Play services was not available for some reason
-		} else {
-			// Get the error code
-			int errorCode = 0;// connectionResult.getErrorCode();
-			// Get the error dialog from Google Play services
-			Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
-					errorCode, this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-
-			// If Google Play services can provide an error dialog
-			if (errorDialog != null) {
-				// Create a new DialogFragment for the error dialog
-				ErrorDialogFragment errorFragment = new ErrorDialogFragment();
-				// Set the dialog in the DialogFragment
-				errorFragment.setDialog(errorDialog);
-				// Show the error dialog in the DialogFragment
-				errorFragment.show(getSupportFragmentManager(),
-						"Location Updates");
-			}
-			return false;
-		}
-	}
+//	private boolean servicesConnected() {
+//		// Check that Google Play services is available
+//		int resultCode = GooglePlayServicesUtil
+//				.isGooglePlayServicesAvailable(this);
+//		// If Google Play services is available
+//		if (ConnectionResult.SUCCESS == resultCode) {
+//			// In debug mode, log the status
+//			Log.d("Location Updates", "Google Play services is available.");
+//			// Continue
+//			return true;
+//			// Google Play services was not available for some reason
+//		} else {
+//			// Get the error code
+//			int errorCode = 0;// connectionResult.getErrorCode();
+//			// Get the error dialog from Google Play services
+//			Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
+//					errorCode, this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+//
+//			// If Google Play services can provide an error dialog
+//			if (errorDialog != null) {
+//				// Create a new DialogFragment for the error dialog
+//				ErrorDialogFragment errorFragment = new ErrorDialogFragment();
+//				// Set the dialog in the DialogFragment
+//				errorFragment.setDialog(errorDialog);
+//				// Show the error dialog in the DialogFragment
+//				errorFragment.show(getSupportFragmentManager(),
+//						"Location Updates");
+//			}
+//			return false;
+//		}
+//	}
 
 }
