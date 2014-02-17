@@ -1,5 +1,6 @@
 package com.example.test;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,8 +25,11 @@ public class BaseMenu  extends FragmentActivity {
 		  Toast.makeText(getApplicationContext(), "Settings item tapped", Toast.LENGTH_SHORT).show();
 	      return true;
 	  case R.id.action_quit:
-		  finish();
-          System.exit(0);
+		  Intent i = new Intent(Intent.ACTION_MAIN);
+		  i.addCategory(Intent.CATEGORY_HOME);
+		  startActivity(i);
+		  return true;
+
 	  }
 
 	  return false;
