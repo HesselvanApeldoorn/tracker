@@ -15,29 +15,56 @@
         android:layout_height="wrap_content"
         android:text="@string/home_screen" />
 
-    <Button
-        android:id="@+id/button_location"
+    <ViewStub
+        android:id="@+id/viewStub1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/textView1"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:onClick="openLocation"
-        android:text="@string/button_toLocation" />
+        android:layout_marginTop="58dp" />
 
-    <TextView
-        android:id="@+id/TextView01"
+    <LinearLayout
+        android:id="@+id/linearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:text="@string/home_screen" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="29dp"
+        android:orientation="vertical"
+        android:showDividers="beginning" >
 
-    <TextView
-        android:id="@+id/TextView02"
+        <Button
+            android:id="@+id/button_location"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:onClick="openLocation"
+            android:text="@string/button_toLocation" />
+
+        <Button
+            android:id="@+id/button_statistics"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:onClick="openStatistics"
+            android:text="@string/button_statistics" />
+
+        <Button
+            android:id="@+id/button_markLocation"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:onClick="openMarkLocation"
+            android:text="@string/button_markLocation" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:text="@string/home_screen" />
+        android:layout_above="@+id/linearLayout1"
+        android:layout_alignLeft="@+id/textView1"
+        android:layout_alignParentTop="false"
+        android:contentDescription="Weather stub"
+        android:src="@drawable/weather_stub" />
 
 </RelativeLayout>

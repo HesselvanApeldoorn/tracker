@@ -8,5 +8,7 @@
     <string name="action_quit">Quit</string>
     <string name="button_toLocation">Location</string>
     <string name="button_toMainActivity">Home</string>
+    <string name="button_statistics">Statistics</string>
+    <string name="button_markLocation">Mark location</string>
 
 </resources>
