@@ -1,13 +1,18 @@
 package com.example.test;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
+import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationRequest;
 
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.support.v4.app.DialogFragment;
@@ -16,13 +21,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Location extends BaseMenu implements
-		GooglePlayServicesClient.ConnectionCallbacks,
-		GooglePlayServicesClient.OnConnectionFailedListener {
+		ConnectionCallbacks, OnConnectionFailedListener, LocationListener
+		{
 
 	// Global variable to hold the current location
 	android.location.Location mCurrentLocation;
 	LocationClient mLocationClient;
-
+	LocationRequest mLocationRequest;
 	/*************************************** CONNECT LOCATION CLIENT ***************************************/
 
 	@Override
@@ -30,6 +35,15 @@ public class Location extends BaseMenu implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.location);
 		mLocationClient = new LocationClient(this, this, this);
+        mLocationRequest = LocationRequest.create();
+
+		 // Use high accuracy
+        mLocationRequest.setPriority(
+                LocationRequest.PRIORITY_HIGH_ACCURACY);
+        // Set the update interval to 5 seconds
+        mLocationRequest.setInterval(1);
+        // Set the fastest update interval to 1 second
+        mLocationRequest.setFastestInterval(1);
 	}
 
 	/*
@@ -51,6 +65,21 @@ public class Location extends BaseMenu implements
 		mLocationClient.disconnect();
 		super.onStop();
 	}
+	
+	@Override
+	protected void onResume() {
+	    super.onResume();
+
+	    Toast.makeText(this, "GPS tracking started",
+	        Toast.LENGTH_SHORT).show();
+
+	 // Start location updates; 5s/5m
+	    LocationManager locManager = (LocationManager)getSystemService(
+	        Context.LOCATION_SERVICE);
+	    locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+	        0, 0, this);
+
+	}//onResume
 
 	/*************************************** DEFINE LOCATION SERVICES CALLBACKS ***************************************/
 
@@ -64,6 +93,38 @@ public class Location extends BaseMenu implements
 				+ mLocationClient.getLastLocation().getLongitude());
 	}
 
+	@Override
+	public void onLocationChanged(android.location.Location location) {
+		String loc = "Connected! Latitude: "
+				+ location.getLatitude()
+				+ ", Longtitude: "
+				+ location.getLongitude();
+		TextView text = (TextView) findViewById(R.id.textView1);
+//		View lv = findViewById(R.layout.location);
+		text.setText(loc);
+		text.invalidate();
+		
+//		Toast.makeText(getApplicationContext(), loc, Toast.LENGTH_SHORT).show();		
+	}
+
+	@Override
+	public void onProviderDisabled(String arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderEnabled(String arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	/*
 	 * Called by Location Services if the connection to the location client
 	 * drops because of an error.
@@ -165,6 +226,8 @@ public class Location extends BaseMenu implements
 			}
 		}
 	}
+
+
 
 //	private boolean servicesConnected() {
 //		// Check that Google Play services is available
