@@ -52,7 +52,8 @@
         <!-- angor START for GoogleMaps -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyAiYMB54zPsbZvOKk55r9Iei8_pKxdiRxo" />
+            android:value="AIzaSyDDu8P2PQSy0ISEvfscxguCsJTEQdZz4h0" />
+        
         <!-- angor END -->
     </application>
 

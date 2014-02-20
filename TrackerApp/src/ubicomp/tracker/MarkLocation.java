@@ -4,6 +4,7 @@ import ubicomp.tracker.R;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -12,7 +13,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 
-public class MarkLocation extends BaseMenu {
+public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 
 	private GoogleMap googleMap;
 
@@ -28,6 +29,7 @@ public class MarkLocation extends BaseMenu {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 	}
 
 	/**
@@ -64,7 +66,10 @@ public class MarkLocation extends BaseMenu {
 						.show();
 			}
 		}
+		
+		this.googleMap.setOnMapLongClickListener(this);
 	}
+
 
 	@Override
 	protected void onResume() {
@@ -72,6 +77,15 @@ public class MarkLocation extends BaseMenu {
 		initilizeMap();
 	}
 
+	@Override
+	public void onMapLongClick(LatLng location) {
+//		Toast.makeText(getApplicationContext(), "Long click in map", Toast.LENGTH_SHORT).show();
+		this.googleMap.addMarker(new MarkerOptions().position(
+				new LatLng(location.latitude, location.longitude)).title(
+				"Added Marker"));
 
 	}
+
+
+}
 
