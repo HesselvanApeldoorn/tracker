@@ -59,14 +59,15 @@ int drawable ic_plusone_small_off_client 0x7f02001a
 int drawable ic_plusone_standard_off_client 0x7f02001b
 int drawable ic_plusone_tall_off_client 0x7f02001c
 int drawable weather_stub 0x7f02001d
-int id action_quit 0x7f05000d
-int id action_settings 0x7f05000c
+int id action_quit 0x7f05000e
+int id action_settings 0x7f05000d
 int id button_location 0x7f050008
 int id button_markLocation 0x7f05000a
 int id button_statistics 0x7f050009
 int id hybrid 0x7f050004
 int id imageView1 0x7f05000b
 int id linearLayout1 0x7f050007
+int id map 0x7f05000c
 int id none 0x7f050000
 int id normal 0x7f050001
 int id satellite 0x7f050002

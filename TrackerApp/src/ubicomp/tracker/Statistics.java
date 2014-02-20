@@ -1,6 +1,6 @@
 package ubicomp.tracker;
 
-import com.example.test.R;
+import ubicomp.tracker.R;
 
 import android.os.Bundle;
 

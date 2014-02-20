@@ -1,6 +1,7 @@
 package ubicomp.tracker;
 
-import com.example.test.R;
+import ubicomp.tracker.R;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
