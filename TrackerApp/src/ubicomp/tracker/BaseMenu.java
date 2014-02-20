@@ -1,4 +1,6 @@
-package com.example.test;
+package ubicomp.tracker;
+
+import com.example.test.R;
 
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
