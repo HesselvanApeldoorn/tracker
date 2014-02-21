@@ -223,7 +223,8 @@ containing a value of this type.
         public static final int zoom_to_fit_icon=0x7f02001e;
     }
     public static final class id {
-        public static final int action_quit=0x7f05000f;
+        public static final int action_quit=0x7f050010;
+        public static final int action_resetLocations=0x7f05000f;
         public static final int action_settings=0x7f05000e;
         public static final int button_location=0x7f050008;
         public static final int button_markLocation=0x7f05000a;
@@ -254,6 +255,7 @@ containing a value of this type.
     }
     public static final class string {
         public static final int action_quit=0x7f06001e;
+        public static final int action_resetLocations=0x7f060023;
         public static final int action_settings=0x7f06001b;
         public static final int app_name=0x7f06001a;
         /**   Title for notification shown when GooglePlayServices needs to be

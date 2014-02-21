@@ -16,7 +16,6 @@ public class MainActivity extends BaseMenu {
 
 	}
 
-	
 	public void openLocation(View view) {
 		Intent location_screen = new Intent(getApplicationContext(), Location.class);
 		startActivity(location_screen);

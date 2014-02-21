@@ -1,5 +1,7 @@
 package ubicomp.tracker;
 
+import java.io.File;
+
 import ubicomp.tracker.R;
 
 import android.content.Intent;
@@ -26,6 +28,9 @@ public class BaseMenu  extends FragmentActivity {
 	  case R.id.action_settings:
 		  Toast.makeText(getApplicationContext(), "Settings item tapped", Toast.LENGTH_SHORT).show();
 	      return true;
+	  case R.id.action_resetLocations: //TODO refactor filename
+		  deleteFile("savedLocations");
+		  return true;
 	  case R.id.action_quit:
 		  Intent i = new Intent(Intent.ACTION_MAIN);
 		  i.addCategory(Intent.CATEGORY_HOME);

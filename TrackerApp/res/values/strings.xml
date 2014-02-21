@@ -10,5 +10,6 @@
     <string name="button_toMainActivity">Home</string>
     <string name="button_statistics">Statistics</string>
     <string name="button_markLocation">Mark location</string>
+    <string name="action_resetLocations">Reset Locations</string>
 
 </resources>
