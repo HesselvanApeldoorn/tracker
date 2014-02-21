@@ -1,6 +1,7 @@
 package ubicomp.tracker;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 import ubicomp.tracker.R;
 import com.google.android.gms.maps.CameraUpdate;
@@ -9,16 +10,15 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -26,16 +26,15 @@ import android.widget.Toast;
 public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 
 	private GoogleMap googleMap;
-
+	private ArrayList<Marker> markers = new ArrayList<Marker>();
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.mark_location);
 
 		try {
-			// Loading map
-			initilizeMap();
-
+			initilizeMap();	// Loading map
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -47,32 +46,31 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 	 * */
 	private void initilizeMap() {
 		double latitude = 53.2191700;
-		double longtitude = 6.5666700;
+		double longitude = 6.5666700;
 
-		if (googleMap == null) {
-			googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+		if (this.googleMap == null) {
+			this.googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 			// create specific Location
 			CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(
-					latitude, longtitude));
+					latitude, longitude));
 			// Specify presentation zoom
 			CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
 			// set both camera and zoom to the above values
-			googleMap.moveCamera(center);
-			googleMap.animateCamera(zoom);
-
+			this.googleMap.moveCamera(center);
+			this.googleMap.animateCamera(zoom);
+			this.googleMap.setMyLocationEnabled(true); //shows current location button
 			// create and place marker at the position created above
-			googleMap
+			Marker marker = this.googleMap
 					.addMarker(new MarkerOptions().position(
-							new LatLng(latitude, longtitude)).title(
-							"Hello Groningen!"));
+							new LatLng(latitude, longitude)).title(
+							"Groningen city"));
+			this.markers.add(marker);
 
-			// enables the Set my Location Button
-			googleMap.getUiSettings().setMyLocationButtonEnabled(true);
 			
 			// check if map is created successfully or not
-			if (googleMap == null) {
+			if (this.googleMap == null) {
 				Toast.makeText(getApplicationContext(),
-						"Sorry! unable to create maps", Toast.LENGTH_SHORT)
+						"Sorry! Unable to create maps", Toast.LENGTH_SHORT)
 						.show();
 			}
 		}
@@ -125,9 +123,22 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		markerOptions.title(locationName);
 		DecimalFormat df = new DecimalFormat("#.###");
 		markerOptions.snippet("Latitude: " + df.format(location.latitude) + ", Longitude: " + df.format(location.longitude));
-		this.googleMap.addMarker(markerOptions);
+		Marker marker = this.googleMap.addMarker(markerOptions);
+		this.markers.add(marker);
 	}
 
-
+	//Fits all the markers in screen
+	public void onZoomToFit(View view) {
+		LatLngBounds.Builder builder = new LatLngBounds.Builder();
+		for (Marker marker : this.markers) { //Calculate bounds of all markers
+		    builder.include(marker.getPosition());
+		}
+		LatLngBounds bounds = builder.build();
+		
+		int padding = 30; // offset from edges of the map (pixels)
+		CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+		
+		this.googleMap.animateCamera(cu); //Use moveCamera if animation is not the way to go
+	}
 }
 
