@@ -1,5 +1,7 @@
 package ubicomp.tracker;
 
+import java.text.DecimalFormat;
+
 import ubicomp.tracker.R;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -9,7 +11,15 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputType;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 
@@ -79,11 +89,43 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 
 	@Override
 	public void onMapLongClick(LatLng location) {
-//		Toast.makeText(getApplicationContext(), "Long click in map", Toast.LENGTH_SHORT).show();
-		this.googleMap.addMarker(new MarkerOptions().position(
-				new LatLng(location.latitude, location.longitude)).title(
-				"Added Marker"));
+		this.inputLocationName(location); //Open an input dialog for location name and add marker
+	}
+		
+	//inputText(title) will show an alert dialog where the user can input text
+	private void inputLocationName(final LatLng location) {
+		Builder alertDialog = new Builder(this);
+		alertDialog.setTitle("Name of location: ");
 
+		final EditText input = new EditText(this); // Set up the input
+		input.setInputType(InputType.TYPE_CLASS_TEXT); // Specify the type of input expected
+		alertDialog.setView(input);
+
+		// Set up the buttons
+		alertDialog.setPositiveButton("Add location", new DialogInterface.OnClickListener() { 
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		    	addMarker(input.getText().toString(), location); //Add marker
+		    }
+		});
+		alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		    	dialog.cancel(); //cancel adding marker
+		    }
+		});
+
+		alertDialog.show();
+	}
+	
+	// Add marker with user defined title
+	private void addMarker(String locationName, LatLng location) {
+		MarkerOptions markerOptions = new MarkerOptions();
+		markerOptions.position(new LatLng(location.latitude, location.longitude));
+		markerOptions.title(locationName);
+		DecimalFormat df = new DecimalFormat("#.###");
+		markerOptions.snippet("Latitude: " + df.format(location.latitude) + ", Longitude: " + df.format(location.longitude));
+		this.googleMap.addMarker(markerOptions);
 	}
 
 
