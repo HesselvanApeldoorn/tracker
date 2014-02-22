@@ -1,5 +1,11 @@
 package ubicomp.tracker;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.text.DecimalFormat;
+
 import ubicomp.tracker.R;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -8,6 +14,9 @@ import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailed
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -23,13 +32,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Location extends BaseMenu implements
-		ConnectionCallbacks, OnConnectionFailedListener, LocationListener
-		{
+	ConnectionCallbacks, OnConnectionFailedListener, LocationListener
+{
 
 	// Global variable to hold the current location
 	android.location.Location mCurrentLocation;
 	LocationClient mLocationClient;
 	LocationRequest mLocationRequest;
+	private final String fileName = "savedLocations"; //[title, lat, lng, snippet]
+
 	/*************************************** CONNECT LOCATION CLIENT ***************************************/
 
 	@Override
@@ -81,7 +92,8 @@ public class Location extends BaseMenu implements
 	    locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
 	        0, 0, this);
 
-	}//onResume
+	}
+	
 
 	/*************************************** DEFINE LOCATION SERVICES CALLBACKS ***************************************/
 
@@ -97,7 +109,27 @@ public class Location extends BaseMenu implements
 
 	@Override
 	public void onLocationChanged(android.location.Location location) {
-		String loc = "Connected! Latitude: "
+//		MarkerOptions markerOptions = new MarkerOptions();
+//		markerOptions.position(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
+//		markerOptions.title("nothing");
+		DecimalFormat df = new DecimalFormat("#.###");
+//		//XXX Spaces in snippet cannot be removed, because of the way we are saving/loading for now
+//		markerOptions.snippet("Latitude:" + df.format(mCurrentLocation.getLatitude()) + ",Longitude:" + df.format(mCurrentLocation.getLongitude()));
+	    FileOutputStream fos;
+		try {
+			fos = openFileOutput(this.fileName, Context.MODE_APPEND);
+	        OutputStreamWriter osw = new OutputStreamWriter(fos);
+			String output = "nothing" + " " + df.format(mCurrentLocation.getLatitude()) + " " + df.format(mCurrentLocation.getLongitude()) + " " + "crap" + "\n";
+		    osw.write(output);
+		    osw.flush();
+		    osw.close();
+		    fos.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String loc = "Updated! Latitude: "
 				+ location.getLatitude()
 				+ ", Longtitude: "
 				+ location.getLongitude();
@@ -106,7 +138,7 @@ public class Location extends BaseMenu implements
 		text.setText(loc);
 		text.invalidate();
 		
-//		Toast.makeText(getApplicationContext(), loc, Toast.LENGTH_SHORT).show();		
+		Toast.makeText(getApplicationContext(), "Updated location", Toast.LENGTH_SHORT).show();		
 	}
 
 	@Override

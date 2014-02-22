@@ -20,6 +20,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -185,10 +187,18 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 			fis = openFileInput(this.fileName);
 		    BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
 		    String line = null;
+	    	MarkerOptions previousMarkerOptions = null;
+	    	MarkerOptions markerOptions = null;
 		    while ((line = reader.readLine()) != null) {
-		    	MarkerOptions markerOptions = readOneMarker(line);
+		    	markerOptions = readOneMarker(line);
+		    	if (previousMarkerOptions == null) previousMarkerOptions = markerOptions;
 		    	Marker marker = this.googleMap.addMarker(markerOptions);
 		        this.markers.add(marker);
+		        PolylineOptions rectOptions = new PolylineOptions()
+		        .add(new LatLng(markerOptions.getPosition().latitude, markerOptions.getPosition().longitude))
+		        .add(new LatLng(previousMarkerOptions.getPosition().latitude, previousMarkerOptions.getPosition().longitude));
+		        Polyline polyline = this.googleMap.addPolyline(rectOptions);
+		        previousMarkerOptions = markerOptions;
 		    }
 		    reader.close();
 		    fis.close();
@@ -212,6 +222,7 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		String[] tokens = line.split(" ");
     	if(tokens.length!=4){throw new IllegalArgumentException();} // 4 values in total
     	String title = tokens[0];
+    	title = "grote markten";
     	Double latitude = Double.parseDouble(tokens[1]);
     	Double longitude = Double.parseDouble(tokens[2]);
     	String snippet = tokens[3];
