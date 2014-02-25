@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import ubicomp.tracker.R;
+
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,6 +25,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.location.Location;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -38,6 +40,7 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 	
 	//Markers are saved as: marker.getTitle() + marker.getPosition().latitude + marker.getPosition().longitud + marker.getSnippet() +"\n"
 	private final String fileName = "savedLocations"; //[title, lat, lng, snippet]
+	private final String savedRoutes = "savedRoutes"; //[lat, lng]
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,8 +94,47 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		this.googleMap.setOnMapLongClickListener(this);
 		
 		this.loadMarkers();
+		this.loadRoutes();
 	}
 
+
+	private void loadRoutes() {
+		FileInputStream fis;
+		LatLng location = null;
+		LatLng previousLocation = null;
+		try {
+			fis = openFileInput(this.savedRoutes);
+		    BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+		    String line = null;
+		    while ((line = reader.readLine()) != null) {
+		    	location = readOneLocation(line);
+		    	if (previousLocation == null) previousLocation = location;
+		        PolylineOptions rectOptions = new PolylineOptions()
+		        .add(new LatLng(location.latitude, location.longitude))
+		        .add(new LatLng(previousLocation.latitude, previousLocation.longitude));
+		        this.googleMap.addPolyline(rectOptions);
+		        previousLocation = location;
+		    }
+		    reader.close();
+		    fis.close();
+		
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+	}
+
+	private LatLng readOneLocation(String line) {
+		String[] tokens = line.split(" ");
+    	if(tokens.length!=2){throw new IllegalArgumentException();} // 2 values in total
+    	Double latitude = Double.valueOf(tokens[0]);
+    	Double longitude = Double.valueOf(tokens[1]);
+		return new LatLng(latitude, longitude);
+	}
 
 	@Override
 	protected void onResume() {
@@ -185,18 +227,11 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 			fis = openFileInput(this.fileName);
 		    BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
 		    String line = null;
-	    	MarkerOptions previousMarkerOptions = null;
 	    	MarkerOptions markerOptions = null;
 		    while ((line = reader.readLine()) != null) {
 		    	markerOptions = readOneMarker(line);
-		    	if (previousMarkerOptions == null) previousMarkerOptions = markerOptions;
 		    	Marker marker = this.googleMap.addMarker(markerOptions);
 		        this.markers.add(marker);
-		        PolylineOptions rectOptions = new PolylineOptions()
-		        .add(new LatLng(markerOptions.getPosition().latitude, markerOptions.getPosition().longitude))
-		        .add(new LatLng(previousMarkerOptions.getPosition().latitude, previousMarkerOptions.getPosition().longitude));
-		        this.googleMap.addPolyline(rectOptions);
-		        previousMarkerOptions = markerOptions;
 		    }
 		    reader.close();
 		    fis.close();

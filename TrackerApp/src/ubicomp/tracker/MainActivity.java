@@ -37,6 +37,7 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 	LocationRequest mLocationRequest;
 	LocationManager locManager;
 	private final String fileName = "savedLocations"; //[title, lat, lng, snippet]
+	private final String savedRoutes = "savedRoutes"; //[lat, lng]
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -120,9 +121,9 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 	public void onLocationChanged(android.location.Location location) {
 	    FileOutputStream fos;
 		try {
-			fos = openFileOutput(this.fileName, Context.MODE_APPEND);
+			fos = openFileOutput(this.savedRoutes, Context.MODE_APPEND);
 	        OutputStreamWriter osw = new OutputStreamWriter(fos);
-			String output = "AutoTitle" + " " + location.getLatitude() + " " + location.getLongitude() + " " + "Latitude:" + location.getLatitude() + ",Longitude:" + location.getLongitude() + "\n";
+			String output = location.getLatitude() + " " + location.getLongitude() + "\n";
 		    osw.write(output);
 		    osw.flush();
 		    osw.close();
