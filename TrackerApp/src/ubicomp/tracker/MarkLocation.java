@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import ubicomp.tracker.R;
@@ -20,7 +19,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import android.app.AlertDialog.Builder;
@@ -145,9 +143,9 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		MarkerOptions markerOptions = new MarkerOptions();
 		markerOptions.position(new LatLng(location.latitude, location.longitude));
 		markerOptions.title(locationName);
-		DecimalFormat df = new DecimalFormat("#.###");
+//		DecimalFormat df = new DecimalFormat("#.##", DecimalFormatSymbols.getInstance());
 		//XXX Spaces in snippet cannot be removed, because of the way we are saving/loading for now
-		markerOptions.snippet("Latitude:" + df.format(location.latitude) + ",Longitude:" + df.format(location.longitude));
+		markerOptions.snippet("Latitude:" + location.latitude + ",Longitude:" + location.longitude);
 		Marker marker = this.googleMap.addMarker(markerOptions);
 		this.markers.add(marker);
 		
@@ -197,7 +195,7 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		        PolylineOptions rectOptions = new PolylineOptions()
 		        .add(new LatLng(markerOptions.getPosition().latitude, markerOptions.getPosition().longitude))
 		        .add(new LatLng(previousMarkerOptions.getPosition().latitude, previousMarkerOptions.getPosition().longitude));
-		        Polyline polyline = this.googleMap.addPolyline(rectOptions);
+		        this.googleMap.addPolyline(rectOptions);
 		        previousMarkerOptions = markerOptions;
 		    }
 		    reader.close();
@@ -222,9 +220,8 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		String[] tokens = line.split(" ");
     	if(tokens.length!=4){throw new IllegalArgumentException();} // 4 values in total
     	String title = tokens[0];
-    	title = "grote markten";
-    	Double latitude = Double.parseDouble(tokens[1]);
-    	Double longitude = Double.parseDouble(tokens[2]);
+    	Double latitude = Double.valueOf(tokens[1]);
+    	Double longitude = Double.valueOf(tokens[2]);
     	String snippet = tokens[3];
     	
     	markerOptions.title(title);
@@ -248,7 +245,7 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		int padding = 30; // offset from edges of the map (pixels)
 		CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
 		
-		this.googleMap.animateCamera(cu); //Use moveCamera if animation is not the way to go
+		this.googleMap.animateCamera(cu);
 	}
 }
 
