@@ -32,9 +32,9 @@ public class MainActivity extends BaseMenu implements
 ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 
 	// Global variable to hold the current location
-	android.location.Location mCurrentLocation;
-	LocationClient mLocationClient;
-	LocationRequest mLocationRequest;
+//	android.location.Location mCurrentLocation;
+//	LocationClient mLocationClient;
+//	LocationRequest mLocationRequest;
 	LocationManager locManager;
 	private final String fileName = "savedLocations"; //[title, lat, lng, snippet]
 	private final String savedRoutes = "savedRoutes"; //[lat, lng]
@@ -44,24 +44,26 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		this.mLocationClient = new LocationClient(this, this, this);
-        this.mLocationRequest = LocationRequest.create();
-        this.locManager = (LocationManager)getSystemService(
-    	        Context.LOCATION_SERVICE);
-
+//		this.mLocationClient = new LocationClient(this, this, this);
+//      this.mLocationRequest = LocationRequest.create();
+        
         final LocationListener locLis = this;
         
 		Switch tracking = (Switch) findViewById(R.id.switch_tracking);
         tracking.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                	if(locManager == null){
+                		Toast.makeText(getApplicationContext(), "Requesting GPS service..", Toast.LENGTH_SHORT).show();
+                		locManager = (LocationManager)getSystemService(
+                    	        Context.LOCATION_SERVICE);
+                	}
         	        Toast.makeText(getApplicationContext(), "tracking on", Toast.LENGTH_SHORT).show();
         	        locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locLis);
         		    locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locLis);
                 } else {
         	        Toast.makeText(getApplicationContext(), "tracking off", Toast.LENGTH_SHORT).show();
         	        locManager.removeUpdates(locLis);
-
                 }
             }
         });
@@ -87,7 +89,7 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 	protected void onStart() {
 		super.onStart();
 		// Connect the client.
-		mLocationClient.connect();
+//		mLocationClient.connect();
 	}
 
 	/*
@@ -96,16 +98,18 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 	@Override
 	protected void onStop() {
 		// Disconnecting the client invalidates it.
-		mLocationClient.disconnect();
+//		mLocationClient.disconnect();
 		super.onStop();
 	}
 	
 	@Override
 	protected void onResume() {
 	    super.onResume();
-	    // TODO change 0, 0 parameters 
-	    locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-	    locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+	    // TODO change 0, 0 parameters
+	    if(locManager != null){
+		    locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+		    locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+	    }
 	}
 	
 
