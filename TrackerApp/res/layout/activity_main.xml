@@ -34,13 +34,6 @@
         android:showDividers="beginning" >
 
         <Button
-            android:id="@+id/button_location"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:onClick="openLocation"
-            android:text="@string/button_toLocation" />
-
-        <Button
             android:id="@+id/button_statistics"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -57,13 +50,22 @@
             android:text="@string/button_markLocation" />
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/imageView1"
+    <Switch
+        android:id="@+id/switch_tracking"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/tracking_switch" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="50dp"
+        android:layout_height="200dp"
         android:layout_above="@+id/linearLayout1"
         android:layout_alignLeft="@+id/textView1"
-        android:layout_alignParentTop="false"
+        android:layout_alignRight="@+id/linearLayout1"
+        android:layout_marginBottom="18dp"
         android:contentDescription="Weather stub"
         android:src="@drawable/weather_stub" />
 

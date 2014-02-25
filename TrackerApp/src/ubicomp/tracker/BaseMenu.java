@@ -1,7 +1,5 @@
 package ubicomp.tracker;
 
-import java.io.File;
-
 import ubicomp.tracker.R;
 
 import android.content.Intent;

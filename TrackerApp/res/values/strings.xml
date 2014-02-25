@@ -11,5 +11,6 @@
     <string name="button_statistics">Statistics</string>
     <string name="button_markLocation">Mark location</string>
     <string name="action_resetLocations">Reset Locations</string>
+    <string name="tracking_switch">Tracking</string>
 
 </resources>
