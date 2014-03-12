@@ -7,7 +7,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import ubicomp.tracker.R;
 
@@ -25,7 +29,6 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.location.Location;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -36,11 +39,7 @@ import android.widget.Toast;
 public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 
 	private GoogleMap googleMap;
-	private ArrayList<Marker> markers = new ArrayList<Marker>();
-	
-	//Markers are saved as: marker.getTitle() + marker.getPosition().latitude + marker.getPosition().longitud + marker.getSnippet() +"\n"
-	private final String fileName = "savedLocations"; //[title, lat, lng, snippet]
-	private final String savedRoutes = "savedRoutes"; //[lat, lng]
+	public static ArrayList<Marker> markers = new ArrayList<Marker>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +79,7 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 					.addMarker(new MarkerOptions().position(
 							new LatLng(latitude, longitude)).title(
 							"Groningen city"));
-			this.markers.add(marker);
+			MarkLocation.markers.add(marker);
 
 			
 			// check if map is created successfully or not
@@ -102,8 +101,10 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		FileInputStream fis;
 		LatLng location = null;
 		LatLng previousLocation = null;
+		
+		
 		try {
-			fis = openFileInput(this.savedRoutes);
+			fis = openFileInput(MainActivity.savedRoutes);
 		    BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
 		    String line = null;
 		    while ((line = reader.readLine()) != null) {
@@ -130,9 +131,18 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 
 	private LatLng readOneLocation(String line) {
 		String[] tokens = line.split(" ");
-    	if(tokens.length!=2){throw new IllegalArgumentException();} // 2 values in total
-    	Double latitude = Double.valueOf(tokens[0]);
-    	Double longitude = Double.valueOf(tokens[1]);
+    	if(tokens.length!=3){throw new IllegalArgumentException();} // 3 values in total
+    	SimpleDateFormat dateFormat = new SimpleDateFormat(MainActivity.dateFormat, Locale.US) ;
+    	Date date = new Date();
+    	try {
+	        date = dateFormat.parse(tokens[0]);
+        } catch (ParseException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+        }
+    	Toast.makeText(getApplicationContext(), "Saved time: " + date, Toast.LENGTH_LONG).show();
+    	Double latitude = Double.valueOf(tokens[1]);
+    	Double longitude = Double.valueOf(tokens[2]);
 		return new LatLng(latitude, longitude);
 	}
 
@@ -189,7 +199,7 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		//XXX Spaces in snippet cannot be removed, because of the way we are saving/loading for now
 		markerOptions.snippet("Latitude:" + location.latitude + ",Longitude:" + location.longitude);
 		Marker marker = this.googleMap.addMarker(markerOptions);
-		this.markers.add(marker);
+		MarkLocation.markers.add(marker);
 		
 		saveMarker(marker);
 	}
@@ -202,11 +212,10 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 	private void saveMarker(Marker marker) {
 	    FileOutputStream fos;
 		try {
-			fos = openFileOutput(this.fileName, Context.MODE_APPEND);
+			fos = openFileOutput(MainActivity.savedLocations, Context.MODE_APPEND);
 	        OutputStreamWriter osw = new OutputStreamWriter(fos);
 			String output = marker.getTitle() + " " + marker.getPosition().latitude + " " + marker.getPosition().longitude + " " + marker.getSnippet() + "\n";
-		    osw.write(output);
-		    osw.flush();
+		    osw.append(output);
 		    osw.close();
 		    fos.close();
 		} catch (FileNotFoundException e) {
@@ -224,14 +233,14 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 	private void loadMarkers() {
 		FileInputStream fis;
 		try {
-			fis = openFileInput(this.fileName);
+			fis = openFileInput(MainActivity.savedLocations);
 		    BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
 		    String line = null;
 	    	MarkerOptions markerOptions = null;
 		    while ((line = reader.readLine()) != null) {
 		    	markerOptions = readOneMarker(line);
 		    	Marker marker = this.googleMap.addMarker(markerOptions);
-		        this.markers.add(marker);
+		        MarkLocation.markers.add(marker);
 		    }
 		    reader.close();
 		    fis.close();
@@ -272,7 +281,7 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 	 */
 	public void onZoomToFit(View view) {
 		LatLngBounds.Builder builder = new LatLngBounds.Builder();
-		for (Marker marker : this.markers) { //Calculate bounds of all markers
+		for (Marker marker : MarkLocation.markers) { //Calculate bounds of all markers
 		    builder.include(marker.getPosition());
 		}
 		LatLngBounds bounds = builder.build();

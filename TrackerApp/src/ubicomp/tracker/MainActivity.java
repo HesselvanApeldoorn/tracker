@@ -4,13 +4,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.location.LocationRequest;
 
 import ubicomp.tracker.R;
 
@@ -31,21 +32,18 @@ import android.widget.Toast;
 public class MainActivity extends BaseMenu implements
 ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 
-	// Global variable to hold the current location
-//	android.location.Location mCurrentLocation;
-//	LocationClient mLocationClient;
-//	LocationRequest mLocationRequest;
 	LocationManager locManager;
-	private final String fileName = "savedLocations"; //[title, lat, lng, snippet]
-	private final String savedRoutes = "savedRoutes"; //[lat, lng]
+
+	public static final String savedLocations = "savedLocations"; //[title, lat, lng, snippet]
+	public static final String savedRoutes = "savedRoutes"; //[lat, lng]
+	public static final String dateFormat = "yyyy-MM-dd-HH-mm-ss"; //format used for storing date and time
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-//		this.mLocationClient = new LocationClient(this, this, this);
-//      this.mLocationRequest = LocationRequest.create();
+		this.createResourceStubs();
         
         final LocationListener locLis = this;
         
@@ -69,6 +67,19 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
         });
 	}
 	
+	private void createResourceStubs() {
+		try {
+			openFileOutput(MainActivity.savedLocations, MODE_APPEND).close();
+		    openFileOutput(MainActivity.savedRoutes, Context.MODE_APPEND).close();				
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void openStatistics(View view) {
 		Intent statistics_screen = new Intent(getApplicationContext(), Statistics.class);
 		startActivity(statistics_screen);
@@ -89,7 +100,6 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 	protected void onStart() {
 		super.onStart();
 		// Connect the client.
-//		mLocationClient.connect();
 	}
 
 	/*
@@ -98,7 +108,6 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 	@Override
 	protected void onStop() {
 		// Disconnecting the client invalidates it.
-//		mLocationClient.disconnect();
 		super.onStop();
 	}
 	
@@ -124,10 +133,12 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 	@Override
 	public void onLocationChanged(android.location.Location location) {
 	    FileOutputStream fos;
+	    String dateString = new SimpleDateFormat(MainActivity.dateFormat,Locale.US).format(new Date()).toString();
 		try {
-			fos = openFileOutput(this.savedRoutes, Context.MODE_APPEND);
+			fos = openFileOutput(MainActivity.savedRoutes, Context.MODE_APPEND);
 	        OutputStreamWriter osw = new OutputStreamWriter(fos);
-			String output = location.getLatitude() + " " + location.getLongitude() + "\n";
+			String output = dateString + " " + location.getLatitude() + " " + location.getLongitude() + "\n";
+			Toast.makeText(getApplicationContext(), dateString, Toast.LENGTH_LONG).show();
 		    osw.write(output);
 		    osw.flush();
 		    osw.close();
