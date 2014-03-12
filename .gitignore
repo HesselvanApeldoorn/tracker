@@ -1,4 +1,8 @@
 *.class
 *.properties
 *.apk
+*.ap_
 *.jar
+*.dex
+bin/
+gen/
