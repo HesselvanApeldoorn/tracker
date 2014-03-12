@@ -29,8 +29,10 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -107,12 +109,43 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 			fis = openFileInput(MainActivity.savedRoutes);
 		    BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
 		    String line = null;
+		    Date firstDate = new Date();
+	    	SimpleDateFormat dateFormat = new SimpleDateFormat(MainActivity.dateFormat, Locale.US) ;
+		    if ((line = reader.readLine()) != null) { // read first date
+		    	String[] tokens = line.split(" ");
+		    	if(tokens.length!=3){throw new IllegalArgumentException();} // 3 values in total
+		    	try {
+			        firstDate = dateFormat.parse(tokens[0]);
+		        } catch (ParseException e) {
+			        // TODO Auto-generated catch block
+			        e.printStackTrace();
+		        }
+		    }
 		    while ((line = reader.readLine()) != null) {
 		    	location = readOneLocation(line);
+		    	String[] tokens = line.split(" ");
+		    	if(tokens.length!=3){throw new IllegalArgumentException();} // 3 values in total
+		    	Date date = new Date();
+		    	try {
+			        date = dateFormat.parse(tokens[0]);
+		        } catch (ParseException e) {
+			        // TODO Auto-generated catch block
+			        e.printStackTrace();
+		        }
+		    	
+		    	Date currentDate = new Date();
+		    	double timespan = currentDate.getTime() - firstDate.getTime();
+		    	double diff = currentDate.getTime() - date.getTime();
+
+		    	int colourPercentage = (int) ((diff/timespan)*255);
+		    	
+		    	int color = Color.rgb(255-colourPercentage, 0, colourPercentage); // Recent routes more red. Older routes more blue
+		    	
 		    	if (previousLocation == null) previousLocation = location;
-		        PolylineOptions rectOptions = new PolylineOptions()
-		        .add(new LatLng(location.latitude, location.longitude))
-		        .add(new LatLng(previousLocation.latitude, previousLocation.longitude));
+		        PolylineOptions rectOptions = new PolylineOptions();
+		        rectOptions.color(color);
+		        rectOptions.add(new LatLng(location.latitude, location.longitude));
+		        rectOptions.add(new LatLng(previousLocation.latitude, previousLocation.longitude));
 		        this.googleMap.addPolyline(rectOptions);
 		        previousLocation = location;
 		    }
@@ -132,15 +165,6 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 	private LatLng readOneLocation(String line) {
 		String[] tokens = line.split(" ");
     	if(tokens.length!=3){throw new IllegalArgumentException();} // 3 values in total
-    	SimpleDateFormat dateFormat = new SimpleDateFormat(MainActivity.dateFormat, Locale.US) ;
-    	Date date = new Date();
-    	try {
-	        date = dateFormat.parse(tokens[0]);
-        } catch (ParseException e) {
-	        // TODO Auto-generated catch block
-	        e.printStackTrace();
-        }
-    	Toast.makeText(getApplicationContext(), "Saved time: " + date, Toast.LENGTH_LONG).show();
     	Double latitude = Double.valueOf(tokens[1]);
     	Double longitude = Double.valueOf(tokens[2]);
 		return new LatLng(latitude, longitude);
