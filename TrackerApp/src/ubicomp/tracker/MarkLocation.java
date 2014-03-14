@@ -20,6 +20,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -46,6 +48,7 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 	private GoogleMap googleMap;
 	public static ArrayList<Marker> markers = new ArrayList<Marker>();
 	public static enum LocationTypes { Home, Work, Sport, Store, Recreation, Other};
+	public CustomLocationList locationList = new CustomLocationList();
 //	public static final String[] locationTypes = new String[] { "Home", "Work", "Sport", "Store", "Recreation", "Other"};
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,11 +84,11 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 			// create and place marker at the position created above
 			
 			// create and place marker at the position created above
-			Marker marker = this.googleMap // TODO why doens't zooming etc work if removing this
-					.addMarker(new MarkerOptions().position(
-							new LatLng(latitude, longitude)).title(
-							"Groningen city"));
-			MarkLocation.markers.add(marker);
+//			Marker marker = this.googleMap // TODO why doens't zooming etc work if removing this
+//					.addMarker(new MarkerOptions().position(
+//							new LatLng(latitude, longitude)).title(
+//							"Groningen city"));
+//			MarkLocation.markers.add(marker);
 
 			
 			// check if map is created successfully or not
@@ -233,6 +236,8 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		layout.addView(rg);
 
 	    alertDialog.setView(layout);
+	    alertDialog.setPositiveButton(android.R.string.ok, null);
+	    
 		// Set up the buttons
 		alertDialog.setPositiveButton("Add location", new DialogInterface.OnClickListener() { 
 		    @Override
@@ -240,6 +245,8 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		    	int maxRadius = 100;
 		    	if(Integer.parseInt(inputRadius.getText().toString())>maxRadius) { //TODO Stop this method and keep dialog open!
 		    		Toast.makeText(getApplicationContext(), "The radius has exceeded the maximum of " + maxRadius , Toast.LENGTH_SHORT).show();
+//		    	} else if(inputRadius.getText().equals("") || inputLocation.getText().equals("")) {
+//		    	    Toast.makeText(getApplicationContext(), "Please fill in all the fields" , Toast.LENGTH_SHORT).show();
 		    	} else {
 		    		int id = rg.getCheckedRadioButtonId();
 		    		int checkedIndex = rg.indexOfChild(rg.findViewById(id));
@@ -316,7 +323,9 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		    while ((line = reader.readLine()) != null) {
 		    	markerOptions = readOneMarker(line);
 		    	Marker marker = this.googleMap.addMarker(markerOptions);
+		    	
 		        MarkLocation.markers.add(marker);
+
 		    }
 		    reader.close();
 		    fis.close();
@@ -332,21 +341,38 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 
 	/**
 	 * Creates MarkerOptions from one line
-	 * @param line comprises: title, lat, lng, snippet
+	 * @param line comprises: title, lat, lng, snippet    	   String title = tokens[0];
+    	   	int radius = Integer.parseInt(tokens[1]);
+    	   	int type = Integer.parseInt(tokens[2]);
+    	   	Double latitude = Double.valueOf(tokens[3]);
+    	   	Double longitude = Double.valueOf(tokens[4]);
+    	   	String snippet = tokens[5];
+    	
+    	markerOptions.title(title);
+    	markerOptions.position(new LatLng(latitude, longitude));
+    	markerOptions.snippet(snippet);
 	 * @return
 	 */
 	private MarkerOptions readOneMarker(String line) {
 		MarkerOptions markerOptions = new MarkerOptions();
 		String[] tokens = line.split(" ");
-    	if(tokens.length!=4){throw new IllegalArgumentException();} // 4 values in total
+    	if(tokens.length!=6){throw new IllegalArgumentException();} // 6 values in total
     	String title = tokens[0];
-    	Double latitude = Double.valueOf(tokens[1]);
-    	Double longitude = Double.valueOf(tokens[2]);
-    	String snippet = tokens[3];
+    	int radius = Integer.parseInt(tokens[1]);
+    	int type = Integer.parseInt(tokens[2]);
+	   	Double latitude = Double.valueOf(tokens[3]);
+	   	Double longitude = Double.valueOf(tokens[4]);
+	   	String snippet = tokens[5];
     	
     	markerOptions.title(title);
     	markerOptions.position(new LatLng(latitude, longitude));
     	markerOptions.snippet(snippet);
+    	
+    	CustomLocation newLocation = new CustomLocation(markerOptions, radius, type);
+    	locationList.Add(newLocation);
+        
+        CircleOptions circleOptions = new CircleOptions().center(markerOptions.getPosition()).radius(radius); // In meters
+        this.googleMap.addCircle(circleOptions);
     	
 		return markerOptions;
 	}
