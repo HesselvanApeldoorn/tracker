@@ -32,9 +32,12 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -42,7 +45,8 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 
 	private GoogleMap googleMap;
 	public static ArrayList<Marker> markers = new ArrayList<Marker>();
-
+	public static enum LocationTypes { Home, Work, Sport, Store, Recreation, Other};
+//	public static final String[] locationTypes = new String[] { "Home", "Work", "Sport", "Store", "Recreation", "Other"};
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -189,15 +193,58 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		Builder alertDialog = new Builder(this);
 		alertDialog.setTitle("Name of location: ");
 
-		final EditText input = new EditText(this); // Set up the input
-		input.setInputType(InputType.TYPE_CLASS_TEXT); // Specify the type of input expected
-		alertDialog.setView(input);
+		final EditText inputLocation = new EditText(this); // Set up input for location
+		inputLocation.setInputType(InputType.TYPE_CLASS_TEXT); // Specify the type of input expected
+		inputLocation.setHint("Enter name of location");
+		
+		final EditText inputRadius = new EditText(this); // Set up input for radius
+		inputRadius.setInputType(InputType.TYPE_CLASS_NUMBER); // Specify the type of input expected
+		inputRadius.setHint("Enter radius of location");
+		//TODO max on radius, enum for mtypes
+		
+		
+		TextView rgTitle = new TextView(this);
+		rgTitle.setText("Type of location");
+		/* Begin of Radiogroup */
+		final RadioGroup rg = new RadioGroup(this);
+		RadioButton rb1 = new RadioButton(this), rb2 = new RadioButton(this), rb3 = new RadioButton(this), rb4 = new RadioButton(this), rb5 = new RadioButton(this), rb6 = new RadioButton(this);
+		rb1.setText(MarkLocation.LocationTypes.Home.toString());
+		rb2.setText(MarkLocation.LocationTypes.Work.toString());
+		rb3.setText(MarkLocation.LocationTypes.Sport.toString());
+		rb4.setText(MarkLocation.LocationTypes.Store.toString());
+		rb5.setText(MarkLocation.LocationTypes.Recreation.toString());
+		rb6.setText(MarkLocation.LocationTypes.Other.toString());
 
+		rg.addView(rb1);
+		rg.addView(rb2);
+		rg.addView(rb3);
+		rg.addView(rb4);
+		rg.addView(rb5);
+		rg.addView(rb6);
+		rg.check(rb1.getId()); //First one is checked by default
+		/* End of Radiogroup*/
+		
+		//Layout of items
+		LinearLayout layout= new LinearLayout(this);
+		layout.setOrientation(1); //1 is for vertical orientation
+		layout.addView(inputLocation);
+		layout.addView(inputRadius);
+		layout.addView(rgTitle);
+		layout.addView(rg);
+
+	    alertDialog.setView(layout);
 		// Set up the buttons
 		alertDialog.setPositiveButton("Add location", new DialogInterface.OnClickListener() { 
 		    @Override
 		    public void onClick(DialogInterface dialog, int which) {
-		    	addMarker(input.getText().toString(), location); //Add marker
+		    	int maxRadius = 100;
+		    	if(Integer.parseInt(inputRadius.getText().toString())>maxRadius) { //TODO Stop this method and keep dialog open!
+		    		Toast.makeText(getApplicationContext(), "The radius has exceeded the maximum of " + maxRadius , Toast.LENGTH_SHORT).show();
+		    	} else {
+		    		int id = rg.getCheckedRadioButtonId();
+		    		int checkedIndex = rg.indexOfChild(rg.findViewById(id));
+		    		addMarker(inputLocation.getText().toString(), inputRadius.getText().toString(), checkedIndex, location); //Add marker
+		    	}
 		    }
 		});
 		alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -207,6 +254,9 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		    }
 		});
 
+		
+
+		    
 		alertDialog.show();
 	}
 	
@@ -215,30 +265,32 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 	 * @param locationName
 	 * @param location
 	 */
-	private void addMarker(String locationName, LatLng location) {
+	private void addMarker(String locationName, String radius, int checkedIndex, LatLng location) {
 		MarkerOptions markerOptions = new MarkerOptions();
 		markerOptions.position(new LatLng(location.latitude, location.longitude));
 		markerOptions.title(locationName);
 //		DecimalFormat df = new DecimalFormat("#.##", DecimalFormatSymbols.getInstance());
 		//XXX Spaces in snippet cannot be removed, because of the way we are saving/loading for now
-		markerOptions.snippet("Latitude:" + location.latitude + ",Longitude:" + location.longitude);
+		markerOptions.snippet("Latitude:" + location.latitude + ",Longitude:" + location.longitude+",radius:" + radius);
 		Marker marker = this.googleMap.addMarker(markerOptions);
 		MarkLocation.markers.add(marker);
 		
-		saveMarker(marker);
+		saveMarker(marker, radius, checkedIndex);
 	}
 	
 	
 	/**
 	 * Saves a marker to file
 	 * @param marker
+	 * @param checkedIndex 
+	 * @param radius 
 	 */
-	private void saveMarker(Marker marker) {
+	private void saveMarker(Marker marker, String radius, int checkedIndex) {
 	    FileOutputStream fos;
 		try {
 			fos = openFileOutput(MainActivity.savedLocations, Context.MODE_APPEND);
 	        OutputStreamWriter osw = new OutputStreamWriter(fos);
-			String output = marker.getTitle() + " " + marker.getPosition().latitude + " " + marker.getPosition().longitude + " " + marker.getSnippet() + "\n";
+			String output = marker.getTitle() + " " + radius + " " +checkedIndex + " " + marker.getPosition().latitude + " " + marker.getPosition().longitude + " " + marker.getSnippet() + "\n";
 		    osw.append(output);
 		    osw.close();
 		    fos.close();
