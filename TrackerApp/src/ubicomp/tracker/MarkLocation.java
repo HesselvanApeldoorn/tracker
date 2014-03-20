@@ -250,7 +250,7 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		    	} else {
 		    		int id = rg.getCheckedRadioButtonId();
 		    		int checkedIndex = rg.indexOfChild(rg.findViewById(id));
-		    		addMarker(inputLocation.getText().toString(), inputRadius.getText().toString(), checkedIndex, location); //Add marker
+		    		addMarker(inputLocation.getText().toString(), Integer.parseInt(inputRadius.getText().toString()), checkedIndex, location); //Add marker
 		    	}
 		    }
 		});
@@ -272,7 +272,7 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 	 * @param locationName
 	 * @param location
 	 */
-	private void addMarker(String locationName, String radius, int checkedIndex, LatLng location) {
+	private void addMarker(String locationName, int radius, int checkedIndex, LatLng location) {
 		MarkerOptions markerOptions = new MarkerOptions();
 		markerOptions.position(new LatLng(location.latitude, location.longitude));
 		markerOptions.title(locationName);
@@ -282,7 +282,7 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		Marker marker = this.googleMap.addMarker(markerOptions);
 		MarkLocation.markers.add(marker);
 		
-		saveMarker(marker, radius, checkedIndex);
+		saveMarker(markerOptions, radius, checkedIndex);
 	}
 	
 	
@@ -292,7 +292,10 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 	 * @param checkedIndex 
 	 * @param radius 
 	 */
-	private void saveMarker(Marker marker, String radius, int checkedIndex) {
+	private void saveMarker(MarkerOptions marker, int radius, int checkedIndex) {
+		locationList.add(new CustomLocation(marker, radius, checkedIndex));
+		
+		//TODO remove the following code after saving locations in memory.
 	    FileOutputStream fos;
 		try {
 			fos = openFileOutput(MainActivity.savedLocations, Context.MODE_APPEND);
@@ -369,7 +372,7 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
     	markerOptions.snippet(snippet);
     	
     	CustomLocation newLocation = new CustomLocation(markerOptions, radius, type);
-    	locationList.Add(newLocation);
+    	locationList.add(newLocation);
         
         CircleOptions circleOptions = new CircleOptions().center(markerOptions.getPosition()).radius(radius); // In meters
         this.googleMap.addCircle(circleOptions);
