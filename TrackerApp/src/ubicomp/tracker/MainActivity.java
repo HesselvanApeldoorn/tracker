@@ -227,7 +227,6 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 	}
 
 	
-	//TODO Add date and lat and long
 	@Override
 	public void onLocationChanged(android.location.Location location) {
 		//TODO --> Check if the current location Overlaps one of the CustomLocations
