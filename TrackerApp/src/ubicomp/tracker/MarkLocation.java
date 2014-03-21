@@ -317,6 +317,15 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 	 * Loads markers from file
 	 */
 	private void loadMarkers() {
+		MarkerOptions markerOption = null;
+		Marker newMarker = null;
+		for(int i=0; i<this.locationList.size(); i++) {
+			markerOption = locationList.get(i).getMarkerOptions();
+			newMarker = this.googleMap.addMarker(markerOption);
+		}
+		
+		
+		// TODO --> move to the on-load of the Application
 		FileInputStream fis;
 		try {
 			fis = openFileInput(MainActivity.savedLocations);
@@ -340,6 +349,7 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
 
 	/**

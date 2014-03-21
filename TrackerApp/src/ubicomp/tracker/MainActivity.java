@@ -132,6 +132,8 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 
 	@Override
 	public void onLocationChanged(android.location.Location location) {
+		//TODO --> Check if the current location Overlaps one of the CustomLocations
+		
 	    FileOutputStream fos;
 	    String dateString = new SimpleDateFormat(MainActivity.dateFormat,Locale.US).format(new Date()).toString();
 		try {

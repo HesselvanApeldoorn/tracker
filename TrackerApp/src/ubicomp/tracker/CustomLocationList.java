@@ -23,6 +23,14 @@ public class CustomLocationList {
 			return this.customLocations.get(index);
 		}
 	}
+	
+	public void Overlap(CustomLocation currentLocation) {
+		for(int i=0; i<this.customLocations.size(); i++) {
+			if(currentLocation.Overlap(customLocations.get(i))) {
+				customLocations.get(i).IncreaseNumberOfVisits();
+			}
+		}
+	}
 
 	/*
 	 * public void LoadLocations(String storedLocations) {

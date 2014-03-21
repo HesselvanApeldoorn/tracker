@@ -1,7 +1,5 @@
 package ubicomp.tracker;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.location.Location;
@@ -48,6 +46,10 @@ public class CustomLocation {
 
 	public int getRadius() {
 		return this.radius;
+	}
+	
+	public MarkerOptions getMarkerOptions() {
+		return this.markeroptions;
 	}
 
 	@Override
