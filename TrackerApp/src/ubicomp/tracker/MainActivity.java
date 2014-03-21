@@ -12,7 +12,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
-
 import ubicomp.tracker.R;
 
 import android.location.LocationListener;
@@ -37,6 +36,7 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 	public static final String savedLocations = "savedLocations"; //[title, lat, lng, snippet]
 	public static final String savedRoutes = "savedRoutes"; //[lat, lng]
 	public static final String dateFormat = "yyyy-MM-dd-HH-mm-ss"; //format used for storing date and time
+	public static final CustomLocationList locationList = new CustomLocationList();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +44,7 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 		setContentView(R.layout.activity_main);
 		
 		this.createResourceStubs();
+        MainActivity.locationList.loadFile(this.getApplicationContext()); //Load markers from file into application on startup
         
         final LocationListener locLis = this;
         
@@ -90,6 +91,18 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 		startActivity(markLocation_screen);
 	}
 
+	/**
+	 * This method is called upon closing the app and saves the variables to files
+	 */
+	@Override
+	public void onBackPressed() {
+	    Toast.makeText(this,"Saving progress to file...",Toast.LENGTH_SHORT).show();
+	    
+	    MainActivity.locationList.saveToFile(this.getApplicationContext()); // Save all the markers to file on closing the application
+	    finish();
+	    return;
+	}   
+	
 	/*************************************** CONNECT LOCATION CLIENT ***************************************/
 
 

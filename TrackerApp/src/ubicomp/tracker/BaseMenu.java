@@ -34,7 +34,7 @@ public class BaseMenu  extends FragmentActivity {
 		case R.id.action_resetLocations: //TODO refresh screen
 			this.clearFileContents(MainActivity.savedLocations);
 			this.clearFileContents(MainActivity.savedRoutes);
-			MarkLocation.markers.clear();
+			MainActivity.locationList.clear();
 			
 			return true;
 		case R.id.action_quit:

@@ -3,13 +3,10 @@ package ubicomp.tracker;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -20,16 +17,13 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -46,10 +40,7 @@ import android.widget.Toast;
 public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 
 	private GoogleMap googleMap;
-	public static ArrayList<Marker> markers = new ArrayList<Marker>();
-	public static enum LocationTypes { Home, Work, Sport, Store, Recreation, Other};
-	public CustomLocationList locationList = new CustomLocationList();
-//	public static final String[] locationTypes = new String[] { "Home", "Work", "Sport", "Store", "Recreation", "Other"};
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -203,7 +194,6 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		final EditText inputRadius = new EditText(this); // Set up input for radius
 		inputRadius.setInputType(InputType.TYPE_CLASS_NUMBER); // Specify the type of input expected
 		inputRadius.setHint("Enter radius of location");
-		//TODO max on radius, enum for mtypes
 		
 		
 		TextView rgTitle = new TextView(this);
@@ -211,12 +201,12 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		/* Begin of Radiogroup */
 		final RadioGroup rg = new RadioGroup(this);
 		RadioButton rb1 = new RadioButton(this), rb2 = new RadioButton(this), rb3 = new RadioButton(this), rb4 = new RadioButton(this), rb5 = new RadioButton(this), rb6 = new RadioButton(this);
-		rb1.setText(MarkLocation.LocationTypes.Home.toString());
-		rb2.setText(MarkLocation.LocationTypes.Work.toString());
-		rb3.setText(MarkLocation.LocationTypes.Sport.toString());
-		rb4.setText(MarkLocation.LocationTypes.Store.toString());
-		rb5.setText(MarkLocation.LocationTypes.Recreation.toString());
-		rb6.setText(MarkLocation.LocationTypes.Other.toString());
+		rb1.setText(CustomLocationList.LocationTypes.Home.toString());
+		rb2.setText(CustomLocationList.LocationTypes.Work.toString());
+		rb3.setText(CustomLocationList.LocationTypes.Sport.toString());
+		rb4.setText(CustomLocationList.LocationTypes.Store.toString());
+		rb5.setText(CustomLocationList.LocationTypes.Recreation.toString());
+		rb6.setText(CustomLocationList.LocationTypes.Other.toString());
 
 		rg.addView(rb1);
 		rg.addView(rb2);
@@ -261,15 +251,15 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		    }
 		});
 
-		
 
-		    
 		alertDialog.show();
 	}
 	
 	/**
 	 *  Add marker with user defined title
 	 * @param locationName
+	 * @param radius
+	 * @param checkedIndex
 	 * @param location
 	 */
 	private void addMarker(String locationName, int radius, int checkedIndex, LatLng location) {
@@ -279,132 +269,60 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 //		DecimalFormat df = new DecimalFormat("#.##", DecimalFormatSymbols.getInstance());
 		//XXX Spaces in snippet cannot be removed, because of the way we are saving/loading for now
 		markerOptions.snippet("Latitude:" + location.latitude + ",Longitude:" + location.longitude+",radius:" + radius);
-		Marker marker = this.googleMap.addMarker(markerOptions);
-		MarkLocation.markers.add(marker);
+		
+		CircleOptions circleOptions = new CircleOptions().center(markerOptions.getPosition()).radius(radius); // In meters
+        this.googleMap.addCircle(circleOptions);
+		this.googleMap.addMarker(markerOptions);
 		
 		saveMarker(markerOptions, radius, checkedIndex);
 	}
 	
 	
 	/**
-	 * Saves a marker to file
+	 * Saves a marker to variable
 	 * @param marker
 	 * @param checkedIndex 
 	 * @param radius 
 	 */
-	private void saveMarker(MarkerOptions marker, int radius, int checkedIndex) {
-		locationList.add(new CustomLocation(marker, radius, checkedIndex));
-		
-		//TODO remove the following code after saving locations in memory.
-	    FileOutputStream fos;
-		try {
-			fos = openFileOutput(MainActivity.savedLocations, Context.MODE_APPEND);
-	        OutputStreamWriter osw = new OutputStreamWriter(fos);
-			String output = marker.getTitle() + " " + radius + " " +checkedIndex + " " + marker.getPosition().latitude + " " + marker.getPosition().longitude + " " + marker.getSnippet() + "\n";
-		    osw.append(output);
-		    osw.close();
-		    fos.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	private void saveMarker(MarkerOptions marker, int radius, int checkedIndex) { //TODO remove method if it will no be expanded
+		MainActivity.locationList.add(new CustomLocation(marker, radius, checkedIndex));
 	}
 	
 	/**
-	 * Loads markers from file
+	 * Loads markers from variable
 	 */
 	private void loadMarkers() {
-		MarkerOptions markerOption = null;
-		Marker newMarker = null;
-		for(int i=0; i<this.locationList.size(); i++) {
-			markerOption = locationList.get(i).getMarkerOptions();
-			newMarker = this.googleMap.addMarker(markerOption);
+		CustomLocation loc = null;
+		for(int i=0; i<MainActivity.locationList.size(); i++) {
+			loc = MainActivity.locationList.get(i);
+			CircleOptions circleOptions = new CircleOptions().center(loc.getMarkerOptions().getPosition()).radius(loc.getRadius()); // In meters
+	        this.googleMap.addCircle(circleOptions);
+			this.googleMap.addMarker(loc.getMarkerOptions());
 		}
-		
-		
-		// TODO --> move to the on-load of the Application
-		FileInputStream fis;
-		try {
-			fis = openFileInput(MainActivity.savedLocations);
-		    BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
-		    String line = null;
-	    	MarkerOptions markerOptions = null;
-		    while ((line = reader.readLine()) != null) {
-		    	markerOptions = readOneMarker(line);
-		    	Marker marker = this.googleMap.addMarker(markerOptions);
-		    	
-		        MarkLocation.markers.add(marker);
-
-		    }
-		    reader.close();
-		    fis.close();
-		
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 	}
 
-	/**
-	 * Creates MarkerOptions from one line
-	 * @param line comprises: title, lat, lng, snippet    	   String title = tokens[0];
-    	   	int radius = Integer.parseInt(tokens[1]);
-    	   	int type = Integer.parseInt(tokens[2]);
-    	   	Double latitude = Double.valueOf(tokens[3]);
-    	   	Double longitude = Double.valueOf(tokens[4]);
-    	   	String snippet = tokens[5];
-    	
-    	markerOptions.title(title);
-    	markerOptions.position(new LatLng(latitude, longitude));
-    	markerOptions.snippet(snippet);
-	 * @return
-	 */
-	private MarkerOptions readOneMarker(String line) {
-		MarkerOptions markerOptions = new MarkerOptions();
-		String[] tokens = line.split(" ");
-    	if(tokens.length!=6){throw new IllegalArgumentException();} // 6 values in total
-    	String title = tokens[0];
-    	int radius = Integer.parseInt(tokens[1]);
-    	int type = Integer.parseInt(tokens[2]);
-	   	Double latitude = Double.valueOf(tokens[3]);
-	   	Double longitude = Double.valueOf(tokens[4]);
-	   	String snippet = tokens[5];
-    	
-    	markerOptions.title(title);
-    	markerOptions.position(new LatLng(latitude, longitude));
-    	markerOptions.snippet(snippet);
-    	
-    	CustomLocation newLocation = new CustomLocation(markerOptions, radius, type);
-    	locationList.add(newLocation);
-        
-        CircleOptions circleOptions = new CircleOptions().center(markerOptions.getPosition()).radius(radius); // In meters
-        this.googleMap.addCircle(circleOptions);
-    	
-		return markerOptions;
-	}
 
 	/**
 	 * Fits all the markers in screen
 	 * @param view
 	 */
 	public void onZoomToFit(View view) {
-		LatLngBounds.Builder builder = new LatLngBounds.Builder();
-		for (Marker marker : MarkLocation.markers) { //Calculate bounds of all markers
-		    builder.include(marker.getPosition());
+		if(MainActivity.locationList.size()>0) {
+			LatLngBounds.Builder builder = new LatLngBounds.Builder();
+			CustomLocation loc = null;
+			for(int i=0; i<MainActivity.locationList.size(); i++) { //Calculate bounds of all markers
+				loc = MainActivity.locationList.get(i);
+			    builder.include(loc.getMarkerOptions().getPosition());
+			}
+			LatLngBounds bounds = builder.build();
+			
+			int padding = 30; // offset from edges of the map (pixels)
+			CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+			
+			this.googleMap.animateCamera(cu);
+		} else {
+			Toast.makeText(this.getApplicationContext(), "No markers saved currently", Toast.LENGTH_SHORT).show();
 		}
-		LatLngBounds bounds = builder.build();
-		
-		int padding = 30; // offset from edges of the map (pixels)
-		CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-		
-		this.googleMap.animateCamera(cu);
 	}
 }
 
