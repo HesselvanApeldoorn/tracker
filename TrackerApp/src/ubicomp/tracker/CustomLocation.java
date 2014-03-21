@@ -6,10 +6,6 @@ import android.location.Location;
 
 public class CustomLocation {
 
-	public enum CustomLocationType {
-		type1, type2, type3, typeX
-	}
-
 	private MarkerOptions markeroptions;
 	private int radius;
 	private int type;

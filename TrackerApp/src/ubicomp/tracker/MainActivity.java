@@ -1,10 +1,15 @@
 package ubicomp.tracker;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -12,6 +17,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
+import com.google.android.gms.maps.model.LatLng;
+
 import ubicomp.tracker.R;
 
 import android.location.LocationListener;
@@ -33,10 +40,11 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 
 	LocationManager locManager;
 
-	public static final String savedLocations = "savedLocations"; //[title, lat, lng, snippet]
-	public static final String savedRoutes = "savedRoutes"; //[lat, lng]
+	public static final String savedLocations = "savedLocations"; // user markers filename
+	public static final String savedRoutes = "savedRoutes"; // tracked routes filename
 	public static final String dateFormat = "yyyy-MM-dd-HH-mm-ss"; //format used for storing date and time
-	public static final CustomLocationList locationList = new CustomLocationList();
+	public static final CustomLocationList locationList = new CustomLocationList(); // User markers list
+	public static final ArrayList<TrackedRoute> routesList = new ArrayList<TrackedRoute>(); // Tracked routes list
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +53,7 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 		
 		this.createResourceStubs();
         MainActivity.locationList.loadFile(this.getApplicationContext()); //Load markers from file into application on startup
+        this.loadTrackedRoutes();
         
         final LocationListener locLis = this;
         
@@ -66,6 +75,55 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
                 }
             }
         });
+	}
+	
+	/**
+	 * Load tracked routes from file into variable
+	 */
+	private void loadTrackedRoutes() {
+		FileInputStream fis = null;
+		
+		try {
+            fis = openFileInput(MainActivity.savedRoutes);
+		    BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+		    
+		    String line = null;
+	    	TrackedRoute route;
+            while ((line = reader.readLine()) != null) {
+            	route = readOneRoute(line);
+            	MainActivity.routesList.add(route);
+            }
+		    reader.close();
+		    fis.close();
+		 } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+	     } catch (IOException e) {
+	    	 // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+		
+	}
+		
+	/**
+	 * Read one route from file
+	 * @param line: one line read from a file
+	 * @return a route object
+	 */
+	private TrackedRoute readOneRoute(String line) {
+		String[] tokens = line.split(" ");
+    	if(tokens.length!=3){throw new IllegalArgumentException();} // 3 values in total
+    	Date date = new Date();
+    	try {
+	    	SimpleDateFormat dateFormat = new SimpleDateFormat(MainActivity.dateFormat, Locale.US) ;
+	        date = dateFormat.parse(tokens[0]);
+        } catch (ParseException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+        }
+    	Double latitude = Double.valueOf(tokens[1]);
+    	Double longitude = Double.valueOf(tokens[2]);
+		return new TrackedRoute(date, new LatLng(latitude, longitude));
 	}
 	
 	private void createResourceStubs() {
@@ -99,9 +157,34 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 	    Toast.makeText(this,"Saving progress to file...",Toast.LENGTH_SHORT).show();
 	    
 	    MainActivity.locationList.saveToFile(this.getApplicationContext()); // Save all the markers to file on closing the application
+	    this.saveRoutesToFile();
 	    finish();
 	    return;
 	}   
+	
+	/**
+	 * Saves the tracked routes from a variable to a file
+	 */
+	private void saveRoutesToFile() {
+		FileOutputStream fos;
+		try {
+			fos = openFileOutput(MainActivity.savedRoutes, Context.MODE_APPEND);
+	        OutputStreamWriter osw = new OutputStreamWriter(fos);
+	        
+	        String output = "";
+	        for(TrackedRoute route: MainActivity.routesList) {
+	        	output += route + "\n";
+	        }
+		    osw.write(output);
+		    osw.flush();
+		    osw.close();
+		    fos.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	/*************************************** CONNECT LOCATION CLIENT ***************************************/
 
@@ -143,28 +226,14 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 		
 	}
 
+	
+	//TODO Add date and lat and long
 	@Override
 	public void onLocationChanged(android.location.Location location) {
 		//TODO --> Check if the current location Overlaps one of the CustomLocations
-		
-	    FileOutputStream fos;
-	    String dateString = new SimpleDateFormat(MainActivity.dateFormat,Locale.US).format(new Date()).toString();
-		try {
-			fos = openFileOutput(MainActivity.savedRoutes, Context.MODE_APPEND);
-	        OutputStreamWriter osw = new OutputStreamWriter(fos);
-			String output = dateString + " " + location.getLatitude() + " " + location.getLongitude() + "\n";
-			Toast.makeText(getApplicationContext(), dateString, Toast.LENGTH_LONG).show();
-		    osw.write(output);
-		    osw.flush();
-		    osw.close();
-		    fos.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		Toast.makeText(getApplicationContext(), "Updated location " + location.getLatitude(), Toast.LENGTH_SHORT).show();		
+	    Date date = new Date();
+		MainActivity.routesList.add(new TrackedRoute(date, new LatLng(location.getLatitude(), location.getLongitude())));
+	    	
 	}
 
 	@Override
