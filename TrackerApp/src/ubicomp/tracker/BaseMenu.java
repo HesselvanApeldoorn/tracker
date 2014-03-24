@@ -35,6 +35,7 @@ public class BaseMenu  extends FragmentActivity {
 			this.clearFileContents(MainActivity.savedLocations);
 			this.clearFileContents(MainActivity.savedRoutes);
 			MainActivity.locationList.clear();
+			MainActivity.routesList.clear();
 			
 			return true;
 		case R.id.action_quit:

@@ -19,7 +19,7 @@ public class Statistics extends BaseMenu {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.statistics);
 		this.applyIntelligence();
-	    Toast.makeText(this, timeSpentHome + "",Toast.LENGTH_SHORT).show();
+	    Toast.makeText(this, "Total time spent home: " + timeSpentHome + "",Toast.LENGTH_SHORT).show();
 		
 	}
 
@@ -54,16 +54,17 @@ public class Statistics extends BaseMenu {
 	
 
 	private void timeSpentInPlaces() {
-		this.timeSpentHome = calcTimeSpentHome(this.customLocationHome);
+		this.timeSpentHome = calcTimeSpentHome();
 	}
 
-	private int calcTimeSpentHome(CustomLocation home) {
+	private int calcTimeSpentHome() {
 		int timeSpent = 0;
 		for(int i=0; i<MainActivity.routesList.size()-1; i++) { // iterate over all route pieces
 			TrackedRoute route = MainActivity.routesList.get(i); // get the location of a route piece
-			LatLng homeLocation = home.getMarkerOptions().getPosition();
-			if (inRadius(home.getRadius(), homeLocation.latitude, homeLocation.longitude, route.getLocation().latitude, route.getLocation().longitude)) {
+			LatLng homeLocation = this.customLocationHome.getMarkerOptions().getPosition();
+			if (inRadius(this.customLocationHome.getRadius(), homeLocation.latitude, homeLocation.longitude, route.getLocation().latitude, route.getLocation().longitude)) {
 				timeSpent += (MainActivity.routesList.get(i+1).getDate().getTime() - route.getDate().getTime()); // add time spent at a certain route piece
+				Toast.makeText(this, "time added: " + (MainActivity.routesList.get(i+1).getDate().getTime() - route.getDate().getTime()) + "",Toast.LENGTH_SHORT).show();
 			}
 		}
 		return timeSpent;
