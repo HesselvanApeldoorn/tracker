@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -22,9 +23,9 @@ public class CustomLocationList {
 	};
 	
 	public void Overlap(CustomLocation currentLocation) {
-		for(int i=0; i<this.customLocations.size(); i++) {
-			if(currentLocation.Overlap(this.customLocations.get(i))) {
-				this.customLocations.get(i).IncreaseNumberOfVisits();
+		for(CustomLocation loc: this.customLocations) {
+			if(currentLocation.Overlap(loc)) {
+				loc.IncreaseNumberOfVisits();
 			}
 		}
 	}
@@ -36,10 +37,17 @@ public class CustomLocationList {
 		    BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
 		    String line = null;
 	    	CustomLocation newLocation = null;
+	    	String crap = ""; //TODO remove
+	    	int counter = 0;
 		    while ((line = reader.readLine()) != null) {
+		    	crap+=line + "\n";
+		    	counter++;
 		    	newLocation = readOneMarker(line);
 		    	this.customLocations.add(newLocation);
 		    }
+		    Log.d("Saved marker file: ", crap);
+		    Log.d("Amount of saved markers: ", ""+counter);
+		    Log.d("Size of arrayList: ", ""+this.customLocations.size());
 		    reader.close();
 		    fis.close();
 		
@@ -66,13 +74,12 @@ public class CustomLocationList {
     	int type = Integer.parseInt(tokens[2]);
 	   	Double latitude = Double.valueOf(tokens[3]);
 	   	Double longitude = Double.valueOf(tokens[4]);
-	   	String snippet = tokens[5];
-    	
+    	Boolean userDefined = Boolean.parseBoolean(tokens[5]);
     	markerOptions.title(title);
     	markerOptions.position(new LatLng(latitude, longitude));
-    	markerOptions.snippet(snippet);
     	
     	CustomLocation newLocation = new CustomLocation(markerOptions, radius, type);
+    	newLocation.setUserDefined(userDefined);
     	
 		return newLocation;
 	}
@@ -96,6 +103,25 @@ public class CustomLocationList {
 		}
 	}
 	
+	public boolean exists(LatLng location) {
+		for(CustomLocation loc: this.customLocations) {
+			if(loc.getMarkerOptions().getPosition().equals(location)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public ArrayList<CustomLocation> findLocationType(int type) {
+		ArrayList<CustomLocation> foundLocations= new ArrayList<CustomLocation>();
+		
+		for(CustomLocation loc: this.customLocations) {
+			if(type==loc.getType()) {
+				foundLocations.add(loc);
+			}
+		}
+		return foundLocations;
+	}
 	/**
 	 * Create one string from all the markers
 	 * @return all markers in a string;

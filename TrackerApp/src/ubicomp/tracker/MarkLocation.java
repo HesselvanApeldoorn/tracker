@@ -8,6 +8,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -19,6 +20,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -137,7 +139,7 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		inputRadius.setHint("Enter radius of location");
 		
 		
-		TextView rgTitle = new TextView(this);
+		TextView rgTitle = new TextView(this); //TODO no space in title otherwise parse error
 		rgTitle.setText("Type of location");
 		/* Begin of Radiogroup */
 		final RadioGroup rg = new RadioGroup(this);
@@ -221,10 +223,17 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 	 */
 	private void loadMarkers() {
 		CustomLocation loc = null;
+		Log.d("Amount of saved markers: " , "" + MainActivity.locationList.size());
 		for(int i=0; i<MainActivity.locationList.size(); i++) {
 			loc = MainActivity.locationList.get(i);
+			Log.d("Marker in location list: ", ""+ loc.getMarkerOptions().getPosition());
+
 			CircleOptions circleOptions = new CircleOptions().center(loc.getMarkerOptions().getPosition()).radius(loc.getRadius()); // In meters
 	        this.googleMap.addCircle(circleOptions);
+	        if(!loc.isUserDefined()) {
+	        	loc.getMarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+	        }
+	        
 			this.googleMap.addMarker(loc.getMarkerOptions());
 		}
 	}

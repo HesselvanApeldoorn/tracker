@@ -30,6 +30,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
@@ -38,6 +39,7 @@ import android.widget.Toast;
 public class MainActivity extends BaseMenu implements
 ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 
+	//TODO remove all Log.d and unnecessary toast 
 	LocationManager locManager;
 
 	public static final String savedLocations = "savedLocations"; // user markers filename
@@ -54,6 +56,18 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 		this.createResourceStubs();
         MainActivity.locationList.loadFile(this.getApplicationContext()); //Load markers from file into application on startup
         this.loadTrackedRoutes();
+        
+        
+        //TODO remove this code:
+        Date date1 = new Date(2014,3,26, 19,30); //year,month,day,hour, minutes
+        Date date2 = new Date(2014,3,26, 19,40); //year,month,day,hour, minutes
+        
+		double latitude = 53.2191700;
+		double longitude = 6.5666700;
+        MainActivity.routesList.add(new TrackedRoute(date1, new LatLng(latitude, longitude)));
+        MainActivity.routesList.add(new TrackedRoute(date2, new LatLng(latitude, longitude)));
+
+        //TODO end of to be removed code
         
         final LocationListener locLis = this;
         
@@ -158,6 +172,12 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 	    
 	    MainActivity.locationList.saveToFile(this.getApplicationContext()); // Save all the markers to file on closing the application
 	    this.saveRoutesToFile();
+	    Log.d("on close amount of markers: ", ""+MainActivity.locationList.size());
+	    
+	    //Clear arrayList as android saves these objects.
+	    MainActivity.locationList.clear();
+	    MainActivity.routesList.clear();
+	    
 	    finish();
 	    return;
 	}   

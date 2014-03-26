@@ -12,5 +12,6 @@
     <string name="button_markLocation">Mark location</string>
     <string name="action_resetLocations">Reset Locations</string>
     <string name="tracking_switch">Tracking</string>
+    <string name="calculateLocations">Find my locations</string>
 
 </resources>

@@ -9,6 +9,7 @@ public class CustomLocation {
 	private MarkerOptions markeroptions;
 	private int radius;
 	private int type;
+	private boolean userDefined = true;
 	private int numberOfVisits;
 	private long secondsSpent;
 
@@ -44,6 +45,10 @@ public class CustomLocation {
 		return this.radius;
 	}
 	
+	public int getType() {
+		return this.type;
+	}
+	
 	public MarkerOptions getMarkerOptions() {
 		return this.markeroptions;
 	}
@@ -55,7 +60,15 @@ public class CustomLocation {
 				+ this.type + " "
 				+ this.markeroptions.getPosition().latitude + " " 
 				+ this.markeroptions.getPosition().longitude + " "
-				+ this.markeroptions.getSnippet();
+				+ this.userDefined;
 	}
+
+	public boolean isUserDefined() {
+	    return this.userDefined;
+    }
+
+	public void setUserDefined(boolean userDefined) {
+	    this.userDefined = userDefined;
+    }
 
 }
