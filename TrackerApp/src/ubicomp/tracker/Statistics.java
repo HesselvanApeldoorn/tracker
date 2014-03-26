@@ -33,21 +33,23 @@ public class Statistics extends BaseMenu {
 
 	private void findSpecialPlaces() {
 		this.locationHome = this.findHome();
-		Toast.makeText(this, "latitude of home: " + this.locationHome.latitude + "",Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "home location: " + this.locationHome.latitude + ", " + this.locationHome.longitude,Toast.LENGTH_SHORT).show();
 	}
 
 	private LatLng findHome() {
-		//TODO not verified yet. Should work in theory.
+		//TODO not verified yet. works in theory.
 		int maxTimeSpent  = 0; // time in milliseconds
 		LatLng locationHome = null;
 		for(int i=0; i<MainActivity.routesList.size()-1; i++) {
 			int timeSpent = 0;
 			LatLng candidateLocationHome = null;
-			if ((MainActivity.routesList.get(i).getDate().getHours() > 18) || (MainActivity.routesList.get(i+1).getDate().getHours()) < 7) { // candidate home location, as you're usually at home between these times
+			if ((MainActivity.routesList.get(i).getDate().getHours() > 18) || (MainActivity.routesList.get(i).getDate().getHours()) < 7) { // candidate home location, as you're usually at home between these times
 				candidateLocationHome = MainActivity.routesList.get(i).getLocation(); // possible homelocation
 				for(int j=0; j<MainActivity.routesList.size()-1; j++) {
-					if  (this.inRadius(Statistics.HOMERADIUS, candidateLocationHome.latitude, candidateLocationHome.longitude, MainActivity.routesList.get(j).getLocation().latitude, MainActivity.routesList.get(j).getLocation().longitude)) {// routepiece is near the previous routepiece
-						timeSpent += (MainActivity.routesList.get(j+1).getDate().getTime() - MainActivity.routesList.get(j).getDate().getTime()); // add time spent at a certain route piece
+					if ((MainActivity.routesList.get(j).getDate().getHours() > 18) || (MainActivity.routesList.get(j).getDate().getHours()) < 7) { // candidate home location, as you're usually at home between these times
+						if  (this.inRadius(Statistics.HOMERADIUS, candidateLocationHome.latitude, candidateLocationHome.longitude, MainActivity.routesList.get(j).getLocation().latitude, MainActivity.routesList.get(j).getLocation().longitude)) {// routepiece is near the previous routepiece
+							timeSpent += (MainActivity.routesList.get(j+1).getDate().getTime() - MainActivity.routesList.get(j).getDate().getTime()); // add time spent at a certain route piece
+						}
 					}
 				}
 			}
