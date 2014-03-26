@@ -67,6 +67,12 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
         MainActivity.routesList.add(new TrackedRoute(date1, new LatLng(latitude, longitude)));
         MainActivity.routesList.add(new TrackedRoute(date2, new LatLng(latitude, longitude)));
 
+        date1 = new Date(2014,3,30,15,20); 
+        date2 = new Date(2014,3,30,15,30); 
+    	latitude = 54.2191700;
+		longitude = 6.5666700;
+        MainActivity.routesList.add(new TrackedRoute(date1, new LatLng(latitude, longitude)));
+        MainActivity.routesList.add(new TrackedRoute(date2, new LatLng(latitude, longitude)));
         //TODO end of to be removed code
         
         final LocationListener locLis = this;
