@@ -7,9 +7,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -58,22 +60,35 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
         this.loadTrackedRoutes();
         
         
-        //TODO remove this code:
-        Date date1 = new Date(2014,3,26, 19,30); //year,month,day,hour, minutes
-        Date date2 = new Date(2014,3,26, 19,40); //year,month,day,hour, minutes
-        
-		double latitude = 53.2191700;
-		double longitude = 6.5666700;
-        MainActivity.routesList.add(new TrackedRoute(date1, new LatLng(latitude, longitude)));
-        MainActivity.routesList.add(new TrackedRoute(date2, new LatLng(latitude, longitude)));
-
-        date1 = new Date(2014,3,30,15,20); 
-        date2 = new Date(2014,3,30,15,30); 
-    	latitude = 54.2191700;
-		longitude = 6.5666700;
-        MainActivity.routesList.add(new TrackedRoute(date1, new LatLng(latitude, longitude)));
-        MainActivity.routesList.add(new TrackedRoute(date2, new LatLng(latitude, longitude)));
-        //TODO end of to be removed code
+//        //TODO remove this code:
+//        Date date1 = new Date(2014,3,26, 19,30); //year,month,day,hour, minutes
+//        Date date2 = new Date(2014,3,26, 19,40); //year,month,day,hour, minutes
+//        Date date4 = new Date(2014,3,28, 19,40); //year,month,day,hour, minutes
+//        Date date5 = new Date(2014,3,29, 19,40); //year,month,day,hour, minutes
+//
+//		double latitude = 53.2191700;
+//		double longitude = 6.5666700;
+//        MainActivity.routesList.add(new TrackedRoute(date1, new LatLng(latitude, longitude)));
+//        MainActivity.routesList.add(new TrackedRoute(date2, new LatLng(latitude, longitude)));
+//
+//        date1 = new Date(2014,3,27,10,20);
+//        date2 = new Date(2014,3,27,10,30); 
+//        Date date3 = new Date(2014,3,27,10,40); 
+//
+//    	latitude = 54.2191700;
+//		longitude = 6.5666700;
+//		Double latitude1 = 54.2191701;
+//		Double longitude1 = 6.5666701;
+//		Double latitude2 = 54.2191701;
+//		Double longitude2= 6.5666701;
+//        MainActivity.routesList.add(new TrackedRoute(date1, new LatLng(latitude, longitude)));
+//        MainActivity.routesList.add(new TrackedRoute(date2, new LatLng(latitude1, longitude1)));     
+//        MainActivity.routesList.add(new TrackedRoute(date3, new LatLng(latitude2, longitude2)));        
+//
+//        MainActivity.routesList.add(new TrackedRoute(date4, new LatLng(latitude, longitude)));
+//        MainActivity.routesList.add(new TrackedRoute(date5, new LatLng(latitude, longitude)));
+//
+//        //TODO end of to be removed code
         
         final LocationListener locLis = this;
         
@@ -169,20 +184,21 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 		startActivity(markLocation_screen);
 	}
 
-	/**
-	 * This method is called upon closing the app and saves the variables to files
-	 */
-	@Override
-	public void onBackPressed() {
-	    Toast.makeText(this,"Saving progress to file...",Toast.LENGTH_SHORT).show();
-	    
-	    MainActivity.locationList.saveToFile(this.getApplicationContext()); // Save all the markers to file on closing the application
+	//TODO call this method on every exception catch
+	public void shutDown() {
+		MainActivity.locationList.saveToFile(this.getApplicationContext()); // Save all the markers to file on closing the application
 	    this.saveRoutesToFile();
-	    Log.d("on close amount of markers: ", ""+MainActivity.locationList.size());
 	    
 	    //Clear arrayList as android saves these objects.
 	    MainActivity.locationList.clear();
 	    MainActivity.routesList.clear();
+	}
+	/**
+	 * This method is called upon closing the app and saves the variables to files
+	 */
+	@Override
+	public void onBackPressed() {	    
+	    this.shutDown();
 	    
 	    finish();
 	    return;

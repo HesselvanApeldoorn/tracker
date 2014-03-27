@@ -37,17 +37,10 @@ public class CustomLocationList {
 		    BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
 		    String line = null;
 	    	CustomLocation newLocation = null;
-	    	String crap = ""; //TODO remove
-	    	int counter = 0;
 		    while ((line = reader.readLine()) != null) {
-		    	crap+=line + "\n";
-		    	counter++;
 		    	newLocation = readOneMarker(line);
 		    	this.customLocations.add(newLocation);
 		    }
-		    Log.d("Saved marker file: ", crap);
-		    Log.d("Amount of saved markers: ", ""+counter);
-		    Log.d("Size of arrayList: ", ""+this.customLocations.size());
 		    reader.close();
 		    fis.close();
 		
@@ -103,6 +96,7 @@ public class CustomLocationList {
 		}
 	}
 	
+	//TODO also include radius
 	public boolean exists(LatLng location) {
 		for(CustomLocation loc: this.customLocations) {
 			if(loc.getMarkerOptions().getPosition().equals(location)) {
