@@ -10,6 +10,7 @@
     tools:context=".Location" >
 
     <LinearLayout
+        android:id="@+id/statisticLayout"        
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
@@ -21,7 +22,19 @@
             android:layout_marginTop="0dp"
             android:onClick="findSpecialPlaces"
             android:text="@string/calculateLocations" />
-
+        
+        <TextView
+            android:id="@+id/characterType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No character defined yet" />
+                
+        <TextView
+            android:id="@+id/mostTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Not enough data" />
+        
 		<TableLayout
 		    android:id="@+id/table"
 		    android:layout_width="wrap_content"

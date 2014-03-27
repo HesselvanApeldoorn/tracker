@@ -10,8 +10,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.util.Log;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -22,13 +20,13 @@ public class CustomLocationList {
 	public CustomLocationList() {
 	};
 	
-	public void Overlap(CustomLocation currentLocation) {
-		for(CustomLocation loc: this.customLocations) {
-			if(currentLocation.Overlap(loc)) {
-				loc.IncreaseNumberOfVisits();
-			}
-		}
-	}
+//	public void Overlap(CustomLocation currentLocation) {
+//		for(CustomLocation loc: this.customLocations) {
+//			if(currentLocation.Overlap(loc)) {
+//				loc.IncreaseNumberOfVisits();
+//			}
+//		}
+//	}
 
 	public void loadFile(Context context) {
 		FileInputStream fis;
@@ -96,11 +94,21 @@ public class CustomLocationList {
 		}
 	}
 	
-	//TODO also include radius
-	public boolean exists(LatLng location) {
+	/**
+	 * Check if location already exists
+	 * @param location: location to be checked
+	 * @param radius: radius of location to be checked
+	 * @param type: type of location to be checked
+	 * @return returns true if the location exists, false otherwise
+	 */
+	public boolean exists(LatLng location, int radius, int type) {
+		MarkerOptions options = new MarkerOptions();
+		options.position(location);
+		
+		CustomLocation customLocation = new CustomLocation(options,radius,type); 
 		for(CustomLocation loc: this.customLocations) {
-			if(loc.getMarkerOptions().getPosition().equals(location)) {
-				return true;
+			if(loc.getType()==type && (loc.getMarkerOptions().getPosition().equals(location) || loc.overlap(customLocation))) {
+				return true; //A similar location is stored already: same type and same location within certain radius
 			}
 		}
 		return false;

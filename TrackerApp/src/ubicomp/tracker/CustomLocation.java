@@ -10,21 +10,21 @@ public class CustomLocation {
 	private int radius;
 	private int type;
 	private boolean userDefined = true;
-	private int numberOfVisits;
-	private long secondsSpent;
+//	private int numberOfVisits;
+//	private long secondsSpent;
 
 	public CustomLocation(MarkerOptions _marker, int _radius, int _type) {
 		this.markeroptions = _marker;
 		this.radius = _radius;
 		this.type = _type;
-		this.numberOfVisits = 0;
+//		this.numberOfVisits = 0;
 	}
 
-	public void IncreaseNumberOfVisits() {
-		this.numberOfVisits++;
-	}
+//	public void IncreaseNumberOfVisits() {
+//		this.numberOfVisits++;
+//	}
 
-	public boolean Overlap(CustomLocation _location) {
+	public boolean overlap(CustomLocation _location) {
 
 		Location storedLocation = new Location("");
 		storedLocation.setLatitude(this.markeroptions.getPosition().latitude);

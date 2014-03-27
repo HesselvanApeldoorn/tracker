@@ -139,7 +139,7 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		inputRadius.setHint("Enter radius of location");
 		
 		
-		TextView rgTitle = new TextView(this); //TODO no space in title otherwise parse error
+		TextView rgTitle = new TextView(this);
 		rgTitle.setText("Type of location");
 		/* Begin of Radiogroup */
 		final RadioGroup rg = new RadioGroup(this);
@@ -176,14 +176,14 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		    @Override
 		    public void onClick(DialogInterface dialog, int which) {
 		    	int maxRadius = 100;
-		    	if(Integer.parseInt(inputRadius.getText().toString())>maxRadius) { //TODO Stop this method and keep dialog open!
+		    	if(inputRadius.getText().toString().equals("") || inputLocation.getText().toString().equals("")) {
+		    	    Toast.makeText(getApplicationContext(), "Please fill in all the fields" , Toast.LENGTH_SHORT).show();
+		    	} else if(Integer.parseInt(inputRadius.getText().toString())>maxRadius) { //TODO Stop this method and keep dialog open!
 		    		Toast.makeText(getApplicationContext(), "The radius has exceeded the maximum of " + maxRadius , Toast.LENGTH_SHORT).show();
-//		    	} else if(inputRadius.getText().equals("") || inputLocation.getText().equals("")) {
-//		    	    Toast.makeText(getApplicationContext(), "Please fill in all the fields" , Toast.LENGTH_SHORT).show();
 		    	} else {
 		    		int id = rg.getCheckedRadioButtonId();
 		    		int checkedIndex = rg.indexOfChild(rg.findViewById(id));
-		    		addMarker(inputLocation.getText().toString(), Integer.parseInt(inputRadius.getText().toString()), checkedIndex, location); //Add marker
+		    		addMarker(inputLocation.getText().toString().replaceAll("\\s+",""), Integer.parseInt(inputRadius.getText().toString()), checkedIndex, location); //Add marker without whitespaces
 		    	}
 		    }
 		});
@@ -223,7 +223,6 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 	 */
 	private void loadMarkers() {
 		CustomLocation loc = null;
-		Log.d("Amount of saved markers: " , "" + MainActivity.locationList.size());
 		for(int i=0; i<MainActivity.locationList.size(); i++) {
 			loc = MainActivity.locationList.get(i);
 			Log.d("Marker in location list: ", ""+ loc.getMarkerOptions().getPosition());
