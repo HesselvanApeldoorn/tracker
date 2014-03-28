@@ -47,7 +47,6 @@ public class Statistics extends BaseMenu {
 		
 		//Calculate where the person has spent the most time
 		for(int i=0; i<this.spentTime.length;i++) {
-			Log.d("Spenttime: " , " index: " + i  + " time: " + this.spentTime[i] + " max " + max + " type: " + type);
 			totalTime+=this.spentTime[i];
 			if(this.spentTime[i]>max) {
 				max = this.spentTime[i];
@@ -55,7 +54,6 @@ public class Statistics extends BaseMenu {
 			}
 		}
 		TextView textView = (TextView)findViewById(R.id.characterType);
-		Log.d("Type: " , ""+type);
 		if(type==-1) {
 			textView.setText("Not enough data to characterize you");
 		} else {

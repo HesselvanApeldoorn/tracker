@@ -225,7 +225,6 @@ public class MarkLocation extends BaseMenu  implements OnMapLongClickListener {
 		CustomLocation loc = null;
 		for(int i=0; i<MainActivity.locationList.size(); i++) {
 			loc = MainActivity.locationList.get(i);
-			Log.d("Marker in location list: ", ""+ loc.getMarkerOptions().getPosition());
 
 			CircleOptions circleOptions = new CircleOptions().center(loc.getMarkerOptions().getPosition()).radius(loc.getRadius()); // In meters
 	        this.googleMap.addCircle(circleOptions);

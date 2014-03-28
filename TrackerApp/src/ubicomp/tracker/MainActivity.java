@@ -38,7 +38,6 @@ import android.widget.Toast;
 public class MainActivity extends BaseMenu implements
 ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 
-	//TODO remove all Log.d and unnecessary toast 
 	LocationManager locManager;
 
 	public static final String savedLocations = "savedLocations"; // user markers filename
@@ -68,8 +67,8 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
                     	        Context.LOCATION_SERVICE);
                 	}
         	        Toast.makeText(getApplicationContext(), "tracking on", Toast.LENGTH_SHORT).show();
-        	        locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locLis);
-        		    locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locLis);
+        	        locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, locLis);
+        		    locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5, locLis);
                 } else {
         	        Toast.makeText(getApplicationContext(), "tracking off", Toast.LENGTH_SHORT).show();
         	        locManager.removeUpdates(locLis);
@@ -218,10 +217,9 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 	@Override
 	protected void onResume() {
 	    super.onResume();
-	    // TODO change 0, 0 parameters
 	    if(locManager != null){
-		    locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-		    locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+		    locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
+		    locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5, this);
 	    }
 	}
 	
