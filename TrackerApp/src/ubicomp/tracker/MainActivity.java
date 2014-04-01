@@ -75,8 +75,63 @@ ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
                 }
             }
         });
+        
+        this.fakeRoutes();
 	}
 	
+	
+	private void fakeRoutes() {
+		MainActivity.routesList.clear();
+//		Date date = new Date
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 10, 00, 10), 6.580097,53.223347));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 13, 40, 10), 6.580097,53.223344));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 14, 40, 10), 6.580097,53.223345));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 15, 40, 10), 6.580097,53.223354));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 16, 40, 10), 6.580097,53.223334));
+
+//		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 17, 59, 10),6.581365986860847,53.2221310222725));
+//		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 19, 0, 10),6.581365986861847,53.2221310222725));
+
+//		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 17,59, 10),6.581665986860847,53.2221310222725));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 17, 59, 20),6.581457266037642,53.22210377374444));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 0, 30),6.581115315130472,53.22198733965116));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 0, 40),6.580549169884968,53.22177970629707));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 0, 50),6.580251021473289,53.2216754323734));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 1, 10),6.579662072194124,53.22156040706825));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 1, 20),6.578946860615663,53.2214287751361));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 1, 30),6.578679525938567,53.22136591644339 ));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 1, 40),6.578650790683751,53.22115588026267));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 1, 50),6.577957206648666,53.22101854667677));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 2, 10),6.577214443727398,53.22085144176958));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 2, 20),6.576521232629093,53.22058299915683));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 2, 30),6.576056424039695,53.2203889809761));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 2, 40),6.575796911962348,53.22027353425727));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 2, 50),6.57526347772091,53.22058131629242));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 3, 10),6.57473940967445,53.22096970832911));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 3, 20),6.573611028933685,53.22059546876568));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 3, 30),6.572855292727631,53.22032404813394));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 3, 40),6.572095379189276,53.22003209791963));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 3, 50),6.57150243145942,53.21983403796948));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 4, 10),6.570661421647587,53.2196138021903));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 4, 20),6.570022279162711,53.21947402925301));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 4, 30),6.569336368126601,53.2193560220129));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 4, 40),6.568213093043534,53.21908889163849 ));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 4, 50),6.568021242422264,53.21902875585243));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 5, 10),6.567930136365805,53.21916998338647));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 5, 20),6.567049864421188,53.21901839983541));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 5, 30),6.566180495425835,53.21882959512244));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 5, 40),6.565488376653141,53.21864389765787));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 5, 50),6.565294234825947,53.2186075638999));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 6, 10),6.564873658042927,53.21848087018186));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 6, 20),6.564400297003701,53.21834940991778));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 6, 30),6.564019255037001,53.21828428361736));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 6, 40),6.563535880585936,53.21820200711145));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 6, 50),6.563277317397496,53.21815088131894));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 7, 10),6.563000337479954,53.21810084312677));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 7, 20),6.562519588913838,53.21802380404714));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 20, 7, 30),6.562262691937566,53.21810807577438));
+		MainActivity.routesList.add(new TrackedRoute(new Date(2014, 3, 2, 22, 7, 30),6.562262691937566,53.21810807577439));
+	}
 	/**
 	 * Load tracked routes from file into variable
 	 */

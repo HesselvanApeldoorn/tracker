@@ -16,6 +16,11 @@ public class TrackedRoute {
 		this.location = location;
 	}
 
+	public TrackedRoute(Date date, double lon, double lat) {
+		this.date = date;
+		this.location = new LatLng(lat,lon);
+	}
+	
 	public LatLng getLocation() {
 	    return this.location;
     }

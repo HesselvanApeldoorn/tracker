@@ -13,6 +13,7 @@ import ubicomp.tracker.R;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -221,27 +222,30 @@ public class Statistics extends BaseMenu {
 	    table.addView(th);
 	    
 		for(CustomLocation loc: locations) {
+			if(loc.getType()==type.ordinal()) {
+				Log.d("radius: " , ""+loc.getRadius());
 			int timeSpent = 0; // time in milliseconds
-			for(int i=0; i<MainActivity.routesList.size()-1; i++) { // iterate over all route pieces
-				TrackedRoute route = MainActivity.routesList.get(i); // get the location of a route piece
-				LatLng location = loc.getMarkerOptions().getPosition();
-				if (this.inRadius(loc.getRadius(), location.latitude, location.longitude, route.getLocation().latitude, route.getLocation().longitude)) {
-					timeSpent += (MainActivity.routesList.get(i+1).getDate().getTime() - route.getDate().getTime()); // add time spent at a certain route piece
+				for(int i=0; i<MainActivity.routesList.size()-1; i++) { // iterate over all route pieces
+					TrackedRoute route = MainActivity.routesList.get(i); // get the location of a route piece
+					LatLng location = loc.getMarkerOptions().getPosition();
+					if (this.inRadius(loc.getRadius(), location.latitude, location.longitude, route.getLocation().latitude, route.getLocation().longitude)) {
+						timeSpent += (MainActivity.routesList.get(i+1).getDate().getTime() - route.getDate().getTime()); // add time spent at a certain route piece
+					}
 				}
+				TableRow row = new TableRow(this);
+				TextView column1 = new TextView(this);
+				column1.setText(loc.getMarkerOptions().getTitle());
+				row.addView(column1);
+		        TextView column2 = new TextView(this);
+		        
+		        DecimalFormat df = new DecimalFormat("####0.00");
+		        double spentTime = timeSpent/3600000.0;
+		        column2.setText(df.format(spentTime) + " hours");
+		        
+		        this.spentTime[type.ordinal()]+=spentTime;
+		        row.addView(column2);
+		        table.addView(row);
 			}
-			TableRow row = new TableRow(this);
-			TextView column1 = new TextView(this);
-			column1.setText(loc.getMarkerOptions().getTitle());
-			row.addView(column1);
-	        TextView column2 = new TextView(this);
-	        
-	        DecimalFormat df = new DecimalFormat("####0.00");
-	        double spentTime = timeSpent/3600000.0;
-	        column2.setText(df.format(spentTime) + " hours");
-	        
-	        this.spentTime[type.ordinal()]+=spentTime;
-	        row.addView(column2);
-	        table.addView(row);
 		}
 	}
 	
@@ -255,8 +259,12 @@ public class Statistics extends BaseMenu {
 		}
 	}
 	
-	private boolean inRadius(int radius, double latitude1, double longitude1, double latitude2, double longitude2) {		
-		return Math.sqrt((latitude1-latitude2)*(longitude1-longitude2)) < radius;
+	private boolean inRadius(int radius, double latitude1, double longitude1, double latitude2, double longitude2) {
+		float[] distances = new float[1];
+
+		Location.distanceBetween(latitude1, longitude1, latitude2, longitude2, distances);
+		
+		return distances[0] < radius;
 	}
 	
 }
